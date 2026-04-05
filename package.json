@@ -1,7 +1,7 @@
 {
   "name": "sondakika",
-  "version": "1.0.1",
-  "description": "Son dakika haberlerine komut satiri uzerinden ulasin.",
+  "version": "1.0.2",
+  "description": "Farkli kanallarin son dakika haberlerine komut satiri uzerinden kolayca ulasin.",
   "main": "index.js",
   "bin": {
     "sondakika": "index.js"
@@ -14,6 +14,10 @@
     "rss",
     "cli"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/eaeoz/sondakika.git"
+  },
   "author": "Sedat ERGOZ",
   "license": "ISC",
   "dependencies": {

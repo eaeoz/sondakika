@@ -4,7 +4,9 @@ const Parser = require('rss-parser');
 
 const sources = {
   ntv: 'https://www.ntv.com.tr/son-dakika.rss',
-  cumhuriyet: 'http://www.cumhuriyet.com.tr/rss/son_dakika.xml'
+  cumhuriyet: 'http://www.cumhuriyet.com.tr/rss/son_dakika.xml',
+  trt: 'https://www.trthaber.com/sondakika.rss',
+  mynet: 'https://www.mynet.com/haber/rss/sondakika'
 };
 
 const parser = new Parser();

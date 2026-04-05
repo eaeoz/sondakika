@@ -41,6 +41,18 @@ sondakika cumhuriyet
 
 # Show Cumhuriyet news with custom count
 sondakika cumhuriyet 20
+
+# Show TRT Haber news
+sondakika trt
+
+# Show TRT Haber news with custom count
+sondakika trt 15
+
+# Show Mynet news
+sondakika mynet
+
+# Show Mynet news with custom count
+sondakika mynet 15
 ```
 
 ### Available Sources
@@ -49,6 +61,8 @@ sondakika cumhuriyet 20
 |---------|--------|
 | `ntv` | NTV Son Dakika |
 | `cumhuriyet` | Cumhuriyet |
+| `trt` | TRT Haber |
+| `mynet` | Mynet |
 
 ### Help
 
