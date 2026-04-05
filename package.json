@@ -1,6 +1,6 @@
 {
   "name": "sondakika",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Farkli kanallarin son dakika haberlerine komut satiri uzerinden kolayca ulasin.",
   "main": "index.js",
   "bin": {
@@ -10,9 +10,9 @@
     "start": "node index.js"
   },
   "keywords": [
-    "news",
-    "rss",
-    "cli"
+    "sondakika",
+    "haberler",
+    "haber"
   ],
   "repository": {
     "type": "git",
