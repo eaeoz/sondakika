@@ -3,7 +3,8 @@
 const Parser = require('rss-parser');
 
 const sources = {
-  ntv: 'https://www.ntv.com.tr/son-dakika.rss'
+  ntv: 'https://www.ntv.com.tr/son-dakika.rss',
+  cumhuriyet: 'http://www.cumhuriyet.com.tr/rss/son_dakika.xml'
 };
 
 const parser = new Parser();
@@ -76,6 +77,8 @@ async function fetchNews(source, count) {
       separator();
       console.log();
     });
+
+    process.exit(0);
   } catch (err) {
     console.error('Error fetching news:', err.message);
     process.exit(1);
@@ -85,9 +88,9 @@ async function fetchNews(source, count) {
 const args = process.argv.slice(2);
 
 if (args.length === 0) {
-  console.log('Usage: news <source> [count]');
+  console.log('Usage: sondakika <source> [count]');
   console.log(`Available sources: ${Object.keys(sources).join(', ')}`);
-  console.log('Example: news ntv 15');
+  console.log('Example: sondakika ntv 15');
   process.exit(1);
 }
 
