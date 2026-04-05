@@ -1,0 +1,23 @@
+{
+  "name": "sondakika",
+  "version": "1.0.1",
+  "description": "Son dakika haberlerine komut satiri uzerinden ulasin.",
+  "main": "index.js",
+  "bin": {
+    "sondakika": "index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "news",
+    "rss",
+    "cli"
+  ],
+  "author": "Sedat ERGOZ",
+  "license": "ISC",
+  "dependencies": {
+    "cli-table3": "^0.6.5",
+    "rss-parser": "^3.13.0"
+  }
+}
