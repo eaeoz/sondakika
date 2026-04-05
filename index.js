@@ -89,11 +89,26 @@ async function fetchNews(source, count) {
 
 const args = process.argv.slice(2);
 
-if (args.length === 0) {
-  console.log('Usage: sondakika <source> [count]');
-  console.log(`Available sources: ${Object.keys(sources).join(', ')}`);
-  console.log('Example: sondakika ntv 15');
-  process.exit(1);
+if (args.length === 0 || args[0] === '--help') {
+  console.log(`
+📰 Sondakika - Son dakika haberleri CLI
+
+Usage:
+  sondakika <source> [count]
+
+Sources:
+  ntv         NTV Son Dakika
+  cumhuriyet  Cumhuriyet
+  trt         TRT Haber
+  mynet       Mynet
+
+Examples:
+  sondakika ntv           # NTV haberleri (varsayilan 10 adet)
+  sondakika ntv 15        # NTV 15 haber
+  sondakika trt           # TRT Haber
+  sondakika mynet 5       # Mynet 5 haber
+`);
+  process.exit(0);
 }
 
 const source = args[0];
