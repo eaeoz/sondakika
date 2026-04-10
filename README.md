@@ -27,7 +27,7 @@ npx sondakika ntv
 npm install -g sondakika
 ```
 
-## Usage
+## Usage Examples
 
 ```bash
 # Show NTV news (default 10 items)
@@ -53,16 +53,46 @@ sondakika mynet
 
 # Show Mynet news with custom count
 sondakika mynet 15
+
+# Show Sabah news
+sondakika sabah
+
+# Show Habertürk news with custom count
+sondakika haberturk 5
+
+# Show Star news
+sondakika star
+
+# Show CNN Türk news
+sondakika cnnturk
+
+# Show Yeni Şafak news
+sondakika yenisafak
+
+# Show Anadolu Ajansı news
+sondakika aa
 ```
 
 ### Available Sources
 
+#### Son Dakika (Breaking News)
 | Command | Source |
 |---------|--------|
-| `ntv` | NTV Son Dakika |
+| `ntv` | NTV (Son Dakika) |
 | `cumhuriyet` | Cumhuriyet |
 | `trt` | TRT Haber |
 | `mynet` | Mynet |
+
+#### Haberler (General News)
+| Command | Source |
+|---------|--------|
+| `sabah` | Sabah |
+| `star` | Star |
+| `vatan` | Gazete Vatan |
+| `haberturk` | Habertürk |
+| `cnnturk` | CNN Türk |
+| `yenisafak` | Yeni Şafak |
+| `aa` | Anadolu Ajansı |
 
 ### Help
 
@@ -76,14 +106,15 @@ sondakika --help
 
 ```
 📰 ══════════════════════════════════════════════════
-   Latest 10 News from NTV
+   Latest 10 News from NTV (Son Dakika)
+   Son guncelleme: 10.04.2026 20:02
    ══════════════════════════════════════════════════
 
   ┌─ 1. Son dakika deprem mi oldu?
   │
   │   📅 10.04.2026 20:02
   │
-  │   Son depremler... 
+  │   Son depremler...
   └─────────────────────────────────────────────────────────────────────
   🔗 https://www.ntv.com.tr/...
 ```
