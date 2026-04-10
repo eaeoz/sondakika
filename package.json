@@ -1,6 +1,6 @@
 {
   "name": "sondakika",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Farkli kanallarin son dakika haberlerine komut satiri uzerinden kolayca ulasin.",
   "main": "index.js",
   "bin": {

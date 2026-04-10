@@ -1,6 +1,11 @@
 #!/usr/bin/env node
 
 const Parser = require('rss-parser');
+const fs = require('fs');
+const path = require('path');
+
+const packagePath = path.join(__dirname, 'package.json');
+const { version } = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
 
 const sources = {
   ntv: 'https://www.ntv.com.tr/son-dakika.rss',
@@ -143,12 +148,14 @@ async function fetchNews(source, count) {
 
 const args = process.argv.slice(2);
 
-if (args.length === 0 || args[0] === '--help') {
+if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
   console.log(`
-📰 Sondakika - Son dakika haberleri CLI
+📰 Sondakika v${version} - Son dakika haberleri CLI
 
 Usage:
   sondakika <source> [count]
+  sondakika --version
+  sondakika --help
 
 Sources (Son Dakika):
   ntv         NTV Son Dakika
@@ -173,6 +180,11 @@ Examples:
   sondakika sabah         # Sabah haberleri
   sondakika haberturk 5   # Habertürk 5 haber
 `);
+  process.exit(0);
+}
+
+if (args[0] === '--version' || args[0] === '-v') {
+  console.log(`sondakika v${version}`);
   process.exit(0);
 }
 
