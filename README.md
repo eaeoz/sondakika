@@ -81,6 +81,8 @@ sondakika --help
 
   ┌─ 1. Son dakika deprem mi oldu?
   │
+  │   📅 10.04.2026 20:02
+  │
   │   Son depremler... 
   └─────────────────────────────────────────────────────────────────────
   🔗 https://www.ntv.com.tr/...
