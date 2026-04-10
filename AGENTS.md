@@ -7,7 +7,7 @@ This is a simple Node.js CLI application that fetches and displays news from RSS
 ## Project Structure
 
 ```
-haberler/
+sondakika/
 ├── index.js          # Main CLI entry point
 ├── package.json      # Project dependencies and scripts
 └── AGENTS.md         # This file - guidelines for AI agents
@@ -23,10 +23,11 @@ node index.js        # Direct execution
 # With arguments
 node index.js ntv              # Show NTV news (default 10 items)
 node index.js ntv 15           # Show 15 NTV news items
+node index.js haberturk 5     # Show Habertürk 5 news
 
-# Global installation (for 'news' command)
+# Global installation (for 'sondakika' command)
 npm link
-news ntv 15   # Run as global command
+sondakika ntv 15   # Run as global command
 ```
 
 ## Adding New RSS Sources
@@ -36,8 +37,12 @@ To add a new news source, edit `index.js` and add to the `sources` object:
 ```javascript
 const sources = {
   ntv: 'https://www.ntv.com.tr/son-dakika.rss',
-  bbc: 'https://feeds.bbci.co.uk/news/rss.xml',
-  cnn: 'http://rss.cnn.com/rss/edition.rss'
+  // ...
+};
+
+const sourceInfo = {
+  ntv: { name: 'NTV', isSondakika: true },  // isSondakika: true for breaking news
+  // ...
 };
 ```
 
@@ -45,6 +50,27 @@ Then run with:
 ```bash
 node index.js bbc
 ```
+
+## Available News Sources
+
+### Son Dakika (Breaking News)
+| Key | Name | Description |
+|-----|------|-------------|
+| ntv | NTV (Son Dakika) | NTV breaking news |
+| cumhuriyet | Cumhuriyet | Cumhuriyet breaking news |
+| trt | TRT Haber | TRT breaking news |
+| mynet | Mynet | Mynet breaking news |
+
+### General News
+| Key | Name | Description |
+|-----|------|-------------|
+| sabah | Sabah | Sabah newspaper |
+| star | Star | Star newspaper |
+| vatan | Gazete Vatan | Vatan newspaper |
+| haberturk | Habertürk | Habertürk news |
+| cnnturk | CNN Türk | CNN Türk news |
+| yenisafak | Yeni Şafak | Yeni Şafak newspaper |
+| aa | Anadolu Ajansı | Anadolu Agency (English) |
 
 ## No Test/Lint Commands
 

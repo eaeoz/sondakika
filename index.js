@@ -6,7 +6,28 @@ const sources = {
   ntv: 'https://www.ntv.com.tr/son-dakika.rss',
   cumhuriyet: 'http://www.cumhuriyet.com.tr/rss/son_dakika.xml',
   trt: 'https://www.trthaber.com/sondakika.rss',
-  mynet: 'https://www.mynet.com/haber/rss/sondakika'
+  mynet: 'https://www.mynet.com/haber/rss/sondakika',
+  sabah: 'https://www.sabah.com.tr/rss/anasayfa.xml',
+  star: 'https://www.star.com.tr/rss/rss.asp?cid=124',
+  vatan: 'https://www.gazetevatan.com/rss/gundem.xml',
+  haberturk: 'https://www.haberturk.com/rss',
+  cnnturk: 'https://cnnturk.com/feed/rss/turkiye',
+  yenisafak: 'https://www.yenisafak.com/rss',
+  aa: 'https://www.aa.com.tr/en/rss'
+};
+
+const sourceInfo = {
+  ntv: { name: 'NTV', isSondakika: true },
+  cumhuriyet: { name: 'Cumhuriyet', isSondakika: true },
+  trt: { name: 'TRT Haber', isSondakika: true },
+  mynet: { name: 'Mynet', isSondakika: true },
+  sabah: { name: 'Sabah', isSondakika: false },
+  star: { name: 'Star', isSondakika: false },
+  vatan: { name: 'Gazete Vatan', isSondakika: false },
+  haberturk: { name: 'Habertürk', isSondakika: false },
+  cnnturk: { name: 'CNN Türk', isSondakika: false },
+  yenisafak: { name: 'Yeni Şafak', isSondakika: false },
+  aa: { name: 'Anadolu Ajansı', isSondakika: false }
 };
 
 const parser = new Parser();
@@ -52,8 +73,12 @@ async function fetchNews(source, count) {
       }
     }
     
+    const sourceKey = source.toLowerCase();
+    const info = sourceInfo[sourceKey] || { name: source.toUpperCase(), isSondakika: false };
+    const sourceName = info.isSondakika ? `${info.name} (Son Dakika)` : info.name;
+    
     console.log('\n📰 ' + '═'.repeat(50));
-    console.log(`   Latest ${items.length} News from ${source.toUpperCase()}`);
+    console.log(`   Latest ${items.length} News from ${sourceName}`);
     if (latestUpdate) {
       console.log(`   Son guncelleme: ${latestUpdate}`);
     }
@@ -125,17 +150,28 @@ if (args.length === 0 || args[0] === '--help') {
 Usage:
   sondakika <source> [count]
 
-Sources:
+Sources (Son Dakika):
   ntv         NTV Son Dakika
   cumhuriyet  Cumhuriyet
   trt         TRT Haber
   mynet       Mynet
+
+Sources (Haberler):
+  sabah       Sabah
+  star        Star
+  vatan       Gazete Vatan
+  haberturk   Habertürk
+  cnnturk     CNN Türk
+  yenisafak   Yeni Şafak
+  aa          Anadolu Ajansı
 
 Examples:
   sondakika ntv           # NTV haberleri (varsayilan 10 adet)
   sondakika ntv 15        # NTV 15 haber
   sondakika trt           # TRT Haber
   sondakika mynet 5       # Mynet 5 haber
+  sondakika sabah         # Sabah haberleri
+  sondakika haberturk 5   # Habertürk 5 haber
 `);
   process.exit(0);
 }
