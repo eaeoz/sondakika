@@ -42,21 +42,45 @@ async function fetchNews(source, count) {
     const feed = await parser.parseURL(url);
     const items = feed.items.slice(0, count);
     
+    const firstItem = feed.items[0];
+    let latestUpdate = '';
+    if (firstItem && (firstItem.pubDate || firstItem.isodate)) {
+      const date = new Date(firstItem.pubDate || firstItem.isodate);
+      if (!isNaN(date.getTime())) {
+        const options = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+        latestUpdate = date.toLocaleDateString('tr-TR', options);
+      }
+    }
+    
     console.log('\n📰 ' + '═'.repeat(50));
     console.log(`   Latest ${items.length} News from ${source.toUpperCase()}`);
+    if (latestUpdate) {
+      console.log(`   Son guncelleme: ${latestUpdate}`);
+    }
     console.log('   ' + '═'.repeat(50) + '\n');
     
     items.forEach((item, index) => {
       const title = item.title;
       const summary = item.summary || item.contentSnippet || '';
       const link = item.link;
+      const pubDate = item.pubDate || item.isodate;
       
-      const titleLines = wrapText(title, 68);
-      const summaryLines = wrapText(summary, 68);
+      let dateStr = '';
+      if (pubDate) {
+        const date = new Date(pubDate);
+        if (!isNaN(date.getTime())) {
+          const options = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+          dateStr = date.toLocaleDateString('tr-TR', options);
+        }
+      }
+      
+      const titleLines = wrapText(title, 60);
+      const summaryLines = wrapText(summary, 60);
       
       const maxWidth = Math.max(
         ...titleLines.map(l => l.length),
         ...summaryLines.map(l => l.length),
+        dateStr.length,
         3
       );
       
@@ -68,6 +92,11 @@ async function fetchNews(source, count) {
         console.log(`  │   ${line}`);
       });
       console.log(`  │`);
+      
+      if (dateStr) {
+        console.log(`  │   📅 ${dateStr}`);
+        console.log(`  │`);
+      }
       
       summaryLines.forEach(line => {
         console.log(`  │   ${line}`);
