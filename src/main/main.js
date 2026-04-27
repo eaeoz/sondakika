@@ -85,6 +85,30 @@ function createWindow() {
   });
 }
 
+function extractImage(item, contentHtml) {
+  if (item.enclosure && item.enclosure.url && item.enclosure.type && item.enclosure.type.startsWith('image')) {
+    return item.enclosure.url;
+  }
+  if (item.thumbnail) {
+    return item.thumbnail.url;
+  }
+  if (item.media && item.media.content && item.media.content.url) {
+    return item.media.content.url;
+  }
+  if (item['media:content'] && item['media:content'].url) {
+    return item['media:content'].url;
+  }
+  if (item['media:thumbnail'] && item['media:thumbnail'].url) {
+    return item['media:thumbnail'].url;
+  }
+  if (item['itunes:image'] && item['itunes:image'].href) {
+    return item['itunes:image'].href;
+  }
+  const imgMatch = contentHtml && contentHtml.match(/<img[^>]+src=["']([^"']+)["']/i);
+  if (imgMatch) return imgMatch[1];
+  return null;
+}
+
 async function fetchAllNews(enabledSources) {
   const results = [];
   
@@ -96,12 +120,14 @@ async function fetchAllNews(enabledSources) {
       const feed = await parser.parseURL(source.url);
       const items = feed.items.map(item => {
         const fullContent = item.content || item['content:encoded'] || item.contentSnippet || item.summary || '';
+        const imageUrl = extractImage(item, fullContent);
         return {
           ...item,
           sourceKey,
           sourceName: source.name,
           isSondakika: source.isSondakika,
-          fullContent: cleanHtml(fullContent)
+          fullContent: cleanHtml(fullContent),
+          imageUrl
         };
       });
       results.push(...items);

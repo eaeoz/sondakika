@@ -649,6 +649,14 @@
       flex: 1;
     }
 
+    .modal-image {
+      width: 100%;
+      max-height: 400px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+
     .modal-content-text {
       font-size: 16px;
       line-height: 1.9;
@@ -1076,6 +1084,14 @@
       document.getElementById('modalContent').textContent = content;
       window.currentModalUrl = news.link;
 
+      const modalImg = document.getElementById('modalImage');
+      if (news.imageUrl) {
+        modalImg.src = news.imageUrl;
+        modalImg.classList.remove('hidden');
+      } else {
+        modalImg.classList.add('hidden');
+      }
+
       document.getElementById('modalOverlay').classList.add('active');
     }
 
@@ -1111,6 +1127,7 @@
         </div>
       </div>
       <div class="modal-body">
+        <img id="modalImage" class="modal-image hidden" />
         <div class="modal-content-text" id="modalContent"></div>
       </div>
       <div class="modal-footer">
