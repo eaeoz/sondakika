@@ -9,7 +9,6 @@ const dataDir = path.join(app.getPath('userData'), 'data');
 const stateFile = path.join(dataDir, 'state.json');
 
 const sources = {
-  ntv: { name: 'NTV', url: 'https://www.ntv.com.tr/son-dakika.rss', isSondakika: true },
   cumhuriyet: { name: 'Cumhuriyet', url: 'https://www.cumhuriyet.com.tr/rss/son_dakika.xml', isSondakika: true },
   trt: { name: 'TRT Haber', url: 'https://www.trthaber.com/sondakika.rss', isSondakika: true },
   mynet: { name: 'Mynet', url: 'https://www.mynet.com/haber/rss/sondakika', isSondakika: true },
@@ -23,7 +22,7 @@ const sources = {
 };
 
 const defaultState = {
-  enabledSources: ['ntv', 'cumhuriyet', 'trt', 'mynet', 'haberturk', 'cnnturk'],
+  enabledSources: ['cumhuriyet', 'trt', 'mynet', 'haberturk', 'cnnturk'],
   sortOrder: 'desc',
   itemsPerPage: 10,
   currentPage: 1,
@@ -103,7 +102,8 @@ function createWindow() {
   });
 }
 
-function extractImage(item, contentHtml) {
+function extractImage(item, contentHtml, sourceKey) {
+  if (sourceKey === 'vatan') return null;
   if (item.enclosure && item.enclosure.url && item.enclosure.type && item.enclosure.type.startsWith('image')) {
     return item.enclosure.url;
   }
@@ -138,7 +138,7 @@ async function fetchAllNews(enabledSources) {
       const feed = await parser.parseURL(source.url);
       const items = feed.items.map(item => {
         const fullContent = item.content || item['content:encoded'] || item.contentSnippet || item.summary || '';
-        const imageUrl = extractImage(item, fullContent);
+        const imageUrl = extractImage(item, fullContent, sourceKey);
         return {
           ...item,
           sourceKey,
