@@ -105,7 +105,6 @@ function createWindow() {
 }
 
 function extractImage(item, contentHtml, sourceKey) {
-  if (sourceKey === 'vatan') return null;
   if (item.enclosure && item.enclosure.url && item.enclosure.type && item.enclosure.type.startsWith('image')) {
     return item.enclosure.url;
   }
@@ -125,6 +124,20 @@ function extractImage(item, contentHtml, sourceKey) {
     return item['itunes:image'].href;
   }
   if (!contentHtml) return null;
+  
+  if (sourceKey === 'vatan') {
+    const vatanPattern = /https:\/\/image\.gazetevatan\.com\/[^"'\s<>]+\.jpg/i;
+    const vatanMatch = contentHtml.match(vatanPattern);
+    if (vatanMatch) {
+      let url = vatanMatch[0];
+      const firstJpg = url.indexOf('.jpg');
+      if (firstJpg !== -1) {
+        url = url.substring(0, firstJpg + 4);
+      }
+      return url;
+    }
+  }
+  
   const srcPattern = /src=["']([^"']+\.(jpg|jpeg|png|webp)[^"']*)["']/i;
   const match = contentHtml.match(srcPattern);
   if (match && match[1]) {
@@ -149,9 +162,10 @@ async function fetchAllNews(enabledSources) {
     try {
       const feed = await parser.parseURL(source.url);
       const items = feed.items.map(item => {
-        let fullContent = item.content || item['content:encoded'] || item.contentSnippet || item.summary || item.description || '';
-        if (!fullContent) {
-          fullContent = item.title || '';
+        let fullContent = item['content:encoded'] || item.content || item.contentSnippet || item.summary || item.description || '';
+        const strippedContent = cleanHtml(fullContent);
+        if (!strippedContent || strippedContent.length < 50) {
+          fullContent = item.content || item['content:encoded'] || item.title || '';
         }
         const imageUrl = extractImage(item, fullContent, sourceKey);
         return {
@@ -175,8 +189,9 @@ async function fetchAllNews(enabledSources) {
 
 function cleanHtml(html) {
   if (!html) return '';
-  let text = html.replace(/<p[^>]*>/gi, '\n\n').replace(/<\/p>/gi, '').replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]*>/g, '');
+  let text = html.replace(/<p[^>]*>/gi, '\n').replace(/<\/p>/gi, '\n').replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]*>/g, '');
   text = text.replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim();
+  text = text.replace(/\n+/g, '\n').trim();
   return text;
 }
 

@@ -1061,7 +1061,8 @@
 
       grid.innerHTML = pageNews.map((news, index) => {
         const date = formatDate(news.pubDate || news.isoDate);
-        const summary = news.summary || news.contentSnippet || news.description || '';
+        let summary = news.summary || news.contentSnippet || news.description || '';
+        summary = summary.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
         const newsIndex = start + index;
 
         return `
@@ -1175,7 +1176,8 @@
 
     function openModalFromNews(news) {
       const date = formatDate(news.pubDate || news.isoDate);
-      const content = news.fullContent || news.content || news.summary || news.contentSnippet || news.description || news.title || news.newsTitle || 'İçerik bulunmuyor.';
+      let content = news.fullContent || news.content || news.summary || news.contentSnippet || news.description || news.title || news.newsTitle || 'İçerik bulunmuyor.';
+      content = content.replace(/<img[^>]*>/gi, '').replace(/<a[^>]*>/gi, '').replace(/<\/a>/gi, '').trim();
 
       document.getElementById('modalSource').innerHTML = `
         <span class="modal-source-tag ${news.isSondakika ? 'breaking' : ''}">${news.sourceName}</span>
@@ -1201,8 +1203,11 @@
       document.getElementById('modalOverlay').classList.remove('active');
     }
 
-    document.getElementById('modalOverlay').addEventListener('click', (e) => {
-      if (e.target === document.getElementById('modalOverlay')) {
+    document.addEventListener('click', (e) => {
+      const overlay = document.getElementById('modalOverlay');
+      const modal = document.querySelector('.modal-content');
+      const newsContainer = document.getElementById('newsContainer');
+      if (overlay.classList.contains('active') && modal && !modal.contains(e.target) && !newsContainer.contains(e.target)) {
         closeModal();
       }
     });
