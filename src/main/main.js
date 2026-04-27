@@ -4,7 +4,15 @@ const fs = require('fs');
 const Parser = require('rss-parser');
 
 let mainWindow;
-const parser = new Parser();
+const parser = new Parser({
+  timeout: 10000,
+  requestOptions: {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+    }
+  },
+  maxRedirects: 5
+});
 const dataDir = path.join(app.getPath('userData'), 'data');
 const stateFile = path.join(dataDir, 'state.json');
 
@@ -50,13 +58,6 @@ function loadState() {
   return { ...defaultState };
 }
 
-function saveWindowBounds() {
-  if (!mainWindow || mainWindow.isDestroyed()) return;
-  const state = loadState();
-  state.windowBounds = mainWindow.getBounds();
-  saveState(state);
-}
-
 function saveState(state) {
   ensureDataDir();
   try {
@@ -69,7 +70,7 @@ function saveState(state) {
 function createWindow() {
   const state = loadState();
   const bounds = state.windowBounds || { width: 1200, height: 800 };
-  
+
   mainWindow = new BrowserWindow({
     width: bounds.width,
     height: bounds.height,
@@ -123,22 +124,35 @@ function extractImage(item, contentHtml, sourceKey) {
   if (item['itunes:image'] && item['itunes:image'].href) {
     return item['itunes:image'].href;
   }
-  const imgMatch = contentHtml && contentHtml.match(/<img[^>]+src=["']([^"']+)["']/i);
-  if (imgMatch) return imgMatch[1];
+  if (!contentHtml) return null;
+  const srcPattern = /src=["']([^"']+\.(jpg|jpeg|png|webp)[^"']*)["']/i;
+  const match = contentHtml.match(srcPattern);
+  if (match && match[1]) {
+    const url = match[1];
+    const extMatch = url.match(/\.(jpg|jpeg|png|webp)/i);
+    if (extMatch) {
+      const baseUrl = url.substring(0, url.indexOf(extMatch[0]) + extMatch[0].length);
+      return baseUrl;
+    }
+    return url;
+  }
   return null;
 }
 
 async function fetchAllNews(enabledSources) {
   const results = [];
-  
+
   for (const sourceKey of enabledSources) {
     const source = sources[sourceKey];
     if (!source) continue;
-    
+
     try {
       const feed = await parser.parseURL(source.url);
       const items = feed.items.map(item => {
-        const fullContent = item.content || item['content:encoded'] || item.contentSnippet || item.summary || '';
+        let fullContent = item.content || item['content:encoded'] || item.contentSnippet || item.summary || item.description || '';
+        if (!fullContent) {
+          fullContent = item.title || '';
+        }
         const imageUrl = extractImage(item, fullContent, sourceKey);
         return {
           ...item,
@@ -146,7 +160,8 @@ async function fetchAllNews(enabledSources) {
           sourceName: source.name,
           isSondakika: source.isSondakika,
           fullContent: cleanHtml(fullContent),
-          imageUrl
+          imageUrl,
+          newsTitle: item.title
         };
       });
       results.push(...items);
@@ -154,7 +169,7 @@ async function fetchAllNews(enabledSources) {
       console.error(`Error fetching ${sourceKey}:`, err.message);
     }
   }
-  
+
   return results;
 }
 
@@ -173,9 +188,16 @@ function sortNews(items, sortOrder) {
   });
 }
 
+function saveWindowBounds() {
+  if (!mainWindow || mainWindow.isDestroyed()) return;
+  const state = loadState();
+  state.windowBounds = mainWindow.getBounds();
+  saveState(state);
+}
+
 app.whenReady().then(() => {
   createWindow();
-  
+
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();

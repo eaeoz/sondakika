@@ -1007,7 +1007,6 @@
           currentState.enabledSources,
           currentState.sortOrder
         );
-        globalThis.newsItems = allNews;
         currentState.currentPage = 1;
         await saveState();
         renderNews();
@@ -1062,10 +1061,8 @@
 
       grid.innerHTML = pageNews.map((news, index) => {
         const date = formatDate(news.pubDate || news.isoDate);
-        const summary = news.summary || news.contentSnippet || '';
-        globalThis.newsItems = globalThis.newsItems || [];
-        const newsIndex = globalThis.newsItems.length;
-        globalThis.newsItems[newsIndex] = news;
+        const summary = news.summary || news.contentSnippet || news.description || '';
+        const newsIndex = start + index;
 
         return `
           <article class="news-card" data-index="${newsIndex}">
@@ -1171,14 +1168,14 @@
     });
 
     function openModalByIndex(index) {
-      const news = globalThis.newsItems && globalThis.newsItems[index];
+      const news = allNews && allNews[index];
       if (!news) return;
       openModalFromNews(news);
     }
 
     function openModalFromNews(news) {
       const date = formatDate(news.pubDate || news.isoDate);
-      const content = news.fullContent || news.content || news.summary || news.contentSnippet || 'İçerik bulunmuyor.';
+      const content = news.fullContent || news.content || news.summary || news.contentSnippet || news.description || news.title || news.newsTitle || 'İçerik bulunmuyor.';
 
       document.getElementById('modalSource').innerHTML = `
         <span class="modal-source-tag ${news.isSondakika ? 'breaking' : ''}">${news.sourceName}</span>
