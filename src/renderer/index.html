@@ -33,6 +33,24 @@
       --breaking: #ef4444;
     }
 
+    .theme-light {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --bg-card: #f1f5f9;
+      --bg-elevated: #e2e8f0;
+      --accent-primary: #6366f1;
+      --accent-secondary: #818cf8;
+      --accent-hover: #4f46e5;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --border-color: #e2e8f0;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --breaking: #dc2626;
+    }
+
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: var(--bg-primary);
@@ -799,6 +817,13 @@
               <button class="font-btn" id="fontIncrease" onclick="changeFontSize(2)">A+</button>
             </div>
           </div>
+          <div class="option-item">
+            <span class="option-label">Tema</span>
+            <select class="option-select" id="themeSelect" onchange="changeTheme(this.value)">
+              <option value="dark">Karanlik</option>
+              <option value="light">Acik</option>
+            </select>
+          </div>
         </div>
       </div>
     </aside>
@@ -839,7 +864,8 @@
       sortOrder: 'desc',
       itemsPerPage: 10,
       currentPage: 1,
-      fontSize: 16
+      fontSize: 16,
+      theme: 'dark'
     };
     let allNews = [];
     let isLoading = false;
@@ -935,7 +961,9 @@
       document.getElementById('sortOrder').value = currentState.sortOrder;
       document.getElementById('itemsPerPage').value = currentState.itemsPerPage;
       document.getElementById('fontSizeValue').textContent = currentState.fontSize + 'px';
+      document.getElementById('themeSelect').value = currentState.theme || 'dark';
       applyFontSize(currentState.fontSize);
+      applyTheme(currentState.theme || 'dark');
     }
 
     async function saveState() {
@@ -944,6 +972,19 @@
 
     function applyFontSize(size) {
       document.getElementById('modalContent').style.fontSize = size + 'px';
+    }
+
+    function applyTheme(theme) {
+      document.body.classList.remove('theme-light');
+      if (theme === 'light') {
+        document.body.classList.add('theme-light');
+      }
+    }
+
+    async function changeTheme(theme) {
+      currentState.theme = theme;
+      applyTheme(theme);
+      await window.electronAPI.setTheme(theme);
     }
 
     async function changeFontSize(delta) {

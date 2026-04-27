@@ -27,7 +27,8 @@ const defaultState = {
   itemsPerPage: 10,
   currentPage: 1,
   windowBounds: null,
-  fontSize: 16
+  fontSize: 16,
+  theme: 'dark'
 };
 
 function ensureDataDir() {
@@ -204,6 +205,13 @@ ipcMain.handle('save-state', (event, state) => {
 ipcMain.handle('set-font-size', (event, fontSize) => {
   const state = loadState();
   state.fontSize = fontSize;
+  saveState(state);
+  return true;
+});
+
+ipcMain.handle('set-theme', (event, theme) => {
+  const state = loadState();
+  state.theme = theme;
   saveState(state);
   return true;
 });
