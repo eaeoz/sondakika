@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, shell } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const Parser = require('rss-parser');
@@ -69,7 +69,9 @@ function createWindow() {
       nodeIntegration: false
     },
     backgroundColor: '#1a1a2e',
-    show: false
+    show: false,
+    frame: true,
+    autoHideMenuBar: true
   });
 
   mainWindow.loadFile(path.join(__dirname, '../renderer/index.html'));
@@ -92,12 +94,16 @@ async function fetchAllNews(enabledSources) {
     
     try {
       const feed = await parser.parseURL(source.url);
-      const items = feed.items.map(item => ({
-        ...item,
-        sourceKey,
-        sourceName: source.name,
-        isSondakika: source.isSondakika
-      }));
+      const items = feed.items.map(item => {
+        const fullContent = item.content || item['content:encoded'] || item.contentSnippet || item.summary || '';
+        return {
+          ...item,
+          sourceKey,
+          sourceName: source.name,
+          isSondakika: source.isSondakika,
+          fullContent: cleanHtml(fullContent)
+        };
+      });
       results.push(...items);
     } catch (err) {
       console.error(`Error fetching ${sourceKey}:`, err.message);
@@ -105,6 +111,11 @@ async function fetchAllNews(enabledSources) {
   }
   
   return results;
+}
+
+function cleanHtml(html) {
+  if (!html) return '';
+  return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim();
 }
 
 function sortNews(items, sortOrder) {
@@ -148,4 +159,9 @@ ipcMain.handle('fetch-news', async (event, enabledSources, sortOrder) => {
   let items = await fetchAllNews(enabledSources);
   items = sortNews(items, sortOrder);
   return items;
+});
+
+ipcMain.handle('open-external', async (event, url) => {
+  await shell.openExternal(url);
+  return true;
 });

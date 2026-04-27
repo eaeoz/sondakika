@@ -358,6 +358,40 @@
       gap: 6px;
     }
 
+    .news-date-badge {
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--accent-secondary);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .external-link-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .external-link-btn:hover {
+      background: var(--accent-primary);
+      color: white;
+      border-color: var(--accent-primary);
+    }
+
     .news-title {
       font-size: 17px;
       font-weight: 600;
@@ -486,6 +520,172 @@
     @keyframes shimmer {
       0% { background-position: 200% 0; }
       100% { background-position: -200% 0; }
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: var(--bg-secondary);
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      border-radius: 20px;
+      overflow: hidden;
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      padding: 24px 28px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .modal-source {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .modal-source-tag {
+      padding: 5px 12px;
+      background: var(--bg-card);
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .modal-source-tag.breaking {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--breaking);
+    }
+
+    .modal-title {
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 1.4;
+      color: var(--text-primary);
+    }
+
+    .modal-close {
+      width: 40px;
+      height: 40px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .modal-close:hover {
+      background: var(--error);
+      border-color: var(--error);
+    }
+
+    .modal-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 28px;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .modal-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .modal-meta-date {
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--accent-secondary);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+
+    .modal-body {
+      padding: 28px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .modal-content-text {
+      font-size: 16px;
+      line-height: 1.8;
+      color: var(--text-secondary);
+    }
+
+    .modal-content-text p {
+      margin-bottom: 16px;
+    }
+
+    .modal-footer {
+      padding: 20px 28px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .modal-open-browser {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 24px;
+      background: var(--accent-primary);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .modal-open-browser:hover {
+      background: var(--accent-hover);
     }
 
     .hidden {
@@ -695,6 +895,7 @@
           currentState.enabledSources,
           currentState.sortOrder
         );
+        globalThis.newsItems = allNews;
         currentState.currentPage = 1;
         await saveState();
         renderNews();
@@ -747,22 +948,26 @@
 
       document.getElementById('newsCount').textContent = `${allNews.length} haber • Sayfa ${currentState.currentPage}/${totalPages}`;
 
-      grid.innerHTML = pageNews.map(news => {
+      grid.innerHTML = pageNews.map((news, index) => {
         const date = formatDate(news.pubDate || news.isoDate);
         const summary = news.summary || news.contentSnippet || '';
+        globalThis.newsItems = globalThis.newsItems || [];
+        const newsIndex = globalThis.newsItems.length;
+        globalThis.newsItems[newsIndex] = news;
 
         return `
-          <article class="news-card" onclick="window.open('${news.link}', '_blank')">
+          <article class="news-card" data-index="${newsIndex}">
             <div class="news-card-header">
               <div class="news-source">
                 <span class="source-tag ${news.isSondakika ? 'breaking' : ''}">${news.sourceName}</span>
               </div>
-              <span class="news-date">📅 ${date}</span>
+              <span class="news-date-badge">🕒 ${date}</span>
             </div>
             <h2 class="news-title">${escapeHtml(news.title)}</h2>
             <p class="news-summary">${escapeHtml(summary)}</p>
             <div class="news-card-footer">
-              <span class="read-more">Habere git →</span>
+              <span class="read-more" onclick="event.stopPropagation(); openModalByIndex(${newsIndex})">Haberi goruntule</span>
+              <span class="external-link-btn" onclick="event.stopPropagation(); window.electronAPI.openExternal('${news.link}')">🔗 Tarayicida ac</span>
             </div>
           </article>
         `;
@@ -840,6 +1045,77 @@
 
     showLoading();
     init();
+
+    document.getElementById('newsContainer').addEventListener('click', (e) => {
+      const card = e.target.closest('.news-card');
+      if (card) {
+        const index = card.dataset.index;
+        if (index !== undefined) {
+          openModalByIndex(parseInt(index));
+        }
+      }
+    });
+
+    function openModalByIndex(index) {
+      const news = globalThis.newsItems && globalThis.newsItems[index];
+      if (!news) return;
+      openModalFromNews(news);
+    }
+
+    function openModalFromNews(news) {
+      const date = formatDate(news.pubDate || news.isoDate);
+      const content = news.fullContent || news.content || news.summary || news.contentSnippet || 'İçerik bulunmuyor.';
+
+      document.getElementById('modalSource').innerHTML = `
+        <span class="modal-source-tag ${news.isSondakika ? 'breaking' : ''}">${news.sourceName}</span>
+        ${news.isSondakika ? '<span class="modal-source-tag breaking">SON DAKIKA</span>' : ''}
+      `;
+      document.getElementById('modalTitle').textContent = news.title;
+      document.getElementById('modalDate').textContent = date;
+      document.getElementById('modalContent').textContent = content;
+      window.currentModalUrl = news.link;
+
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('active');
+    }
+
+    document.getElementById('modalOverlay').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('modalOverlay')) {
+        closeModal();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    });
   </script>
+
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <div class="modal-source" id="modalSource"></div>
+          <h2 class="modal-title" id="modalTitle"></h2>
+        </div>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-meta">
+        <div class="modal-meta-item">
+          <span class="modal-meta-date">🕒 <span id="modalDate"></span></span>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="modal-content-text" id="modalContent"></div>
+      </div>
+      <div class="modal-footer">
+        <span id="modalOpenBrowser" class="modal-open-browser" onclick="window.electronAPI.openExternal(currentModalUrl)">🌐 Tarayicida ac</span>
+      </div>
+    </div>
+  </div>
 </body>
 </html>
