@@ -725,24 +725,76 @@
     }
 
     .modal-footer {
-      padding: 20px 28px;
+      padding: 16px 28px;
       border-top: 1px solid var(--border-color);
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 16px;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .modal-nav-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .modal-nav-btn:hover {
+      background: var(--bg-elevated);
+      border-color: var(--accent-primary);
+      color: var(--accent-secondary);
+    }
+
+    .modal-nav-btn.close-action {
+      background: rgba(239, 68, 68, 0.1);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: var(--breaking);
+    }
+
+    .modal-nav-btn.close-action:hover {
+      background: var(--error);
+      border-color: var(--error);
+      color: white;
+    }
+
+    .modal-counter {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      min-width: 70px;
+      text-align: center;
+      background: var(--bg-card);
+      padding: 8px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
     }
 
     .modal-open-browser {
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 14px 24px;
+      padding: 10px 18px;
       background: var(--accent-primary);
       color: white;
       border: none;
       border-radius: 10px;
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
@@ -751,6 +803,22 @@
 
     .modal-open-browser:hover {
       background: var(--accent-hover);
+    }
+
+    /* Slide animation for modal body */
+    @keyframes slideInFromRight {
+      from { opacity: 0; transform: translateX(48px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideInFromLeft {
+      from { opacity: 0; transform: translateX(-48px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .modal-slide-right {
+      animation: slideInFromRight 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .modal-slide-left {
+      animation: slideInFromLeft 0.28s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .hidden {
@@ -1168,13 +1236,16 @@
       }
     });
 
-    function openModalByIndex(index) {
+    let currentModalIndex = -1;
+
+    function openModalByIndex(index, slideDir) {
       const news = allNews && allNews[index];
       if (!news) return;
-      openModalFromNews(news);
+      currentModalIndex = index;
+      openModalFromNews(news, slideDir);
     }
 
-    function openModalFromNews(news) {
+    function openModalFromNews(news, slideDir) {
       const date = formatDate(news.pubDate || news.isoDate);
       let content = news.fullContent || news.content || news.summary || news.contentSnippet || news.description || news.title || news.newsTitle || 'İçerik bulunmuyor.';
       content = content.replace(/<img[^>]*>/gi, '').replace(/<a[^>]*>/gi, '').replace(/<\/a>/gi, '').trim();
@@ -1185,7 +1256,6 @@
       `;
       document.getElementById('modalTitle').textContent = news.title;
       document.getElementById('modalDate').textContent = date;
-      document.getElementById('modalContent').textContent = content;
       window.currentModalUrl = news.link;
 
       const modalImg = document.getElementById('modalImage');
@@ -1196,11 +1266,55 @@
         modalImg.classList.add('hidden');
       }
 
+      // Slide animation
+      const bodyEl = document.getElementById('modalBody');
+      bodyEl.classList.remove('modal-slide-right', 'modal-slide-left');
+      void bodyEl.offsetWidth; // reflow
+      if (slideDir === 'right') bodyEl.classList.add('modal-slide-right');
+      else if (slideDir === 'left') bodyEl.classList.add('modal-slide-left');
+
+      document.getElementById('modalContent').textContent = content;
+
+      // Update counter and button states
+      const total = allNews.length;
+      document.getElementById('modalCounter').textContent = `${currentModalIndex + 1} / ${total}`;
+
+      const prevBtn = document.getElementById('modalPrevBtn');
+      const nextBtn = document.getElementById('modalNextBtn');
+
+      // First item: prev becomes "close"  |  Last item: next becomes "close"
+      if (currentModalIndex === 0) {
+        prevBtn.innerHTML = '✕ Kapat';
+        prevBtn.classList.add('close-action');
+      } else {
+        prevBtn.innerHTML = '← Önceki';
+        prevBtn.classList.remove('close-action');
+      }
+
+      if (currentModalIndex === total - 1) {
+        nextBtn.innerHTML = 'Kapat ✕';
+        nextBtn.classList.add('close-action');
+      } else {
+        nextBtn.innerHTML = 'Sonraki →';
+        nextBtn.classList.remove('close-action');
+      }
+
       document.getElementById('modalOverlay').classList.add('active');
     }
 
+    window.navigateModal = function(direction) {
+      const total = allNews ? allNews.length : 0;
+      const nextIndex = currentModalIndex + direction;
+      if (nextIndex < 0 || nextIndex >= total) {
+        closeModal();
+      } else {
+        openModalByIndex(nextIndex, direction > 0 ? 'right' : 'left');
+      }
+    };
+
     function closeModal() {
       document.getElementById('modalOverlay').classList.remove('active');
+      currentModalIndex = -1;
     }
 
     document.addEventListener('click', (e) => {
@@ -1213,9 +1327,11 @@
     });
 
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeModal();
-      }
+      const overlay = document.getElementById('modalOverlay');
+      if (!overlay.classList.contains('active')) return;
+      if (e.key === 'Escape') closeModal();
+      if (e.key === 'ArrowRight') navigateModal(1);
+      if (e.key === 'ArrowLeft') navigateModal(-1);
     });
   </script>
 
@@ -1233,12 +1349,21 @@
           <span class="modal-meta-date">🕒 <span id="modalDate"></span></span>
         </div>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" id="modalBody">
         <img id="modalImage" class="modal-image hidden" />
         <div class="modal-content-text" id="modalContent"></div>
       </div>
       <div class="modal-footer">
-        <span id="modalOpenBrowser" class="modal-open-browser" onclick="window.electronAPI.openExternal(currentModalUrl)">🌐 Tarayicida ac</span>
+        <div class="modal-nav-group">
+          <button class="modal-nav-btn" id="modalPrevBtn" onclick="navigateModal(-1)">← Önceki</button>
+        </div>
+        <div class="modal-nav-group" style="gap:8px;">
+          <span class="modal-counter" id="modalCounter">1 / 1</span>
+          <span class="modal-open-browser" onclick="window.electronAPI.openExternal(currentModalUrl)">🌐 Tarayıcıda Aç</span>
+        </div>
+        <div class="modal-nav-group">
+          <button class="modal-nav-btn" id="modalNextBtn" onclick="navigateModal(1)">Sonraki →</button>
+        </div>
       </div>
     </div>
   </div>
