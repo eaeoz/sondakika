@@ -26,7 +26,8 @@ const defaultState = {
   enabledSources: ['ntv', 'cumhuriyet', 'trt', 'mynet', 'haberturk', 'cnnturk'],
   sortOrder: 'desc',
   itemsPerPage: 10,
-  currentPage: 1
+  currentPage: 1,
+  windowBounds: null
 };
 
 function ensureDataDir() {
@@ -48,6 +49,13 @@ function loadState() {
   return { ...defaultState };
 }
 
+function saveWindowBounds() {
+  if (!mainWindow || mainWindow.isDestroyed()) return;
+  const state = loadState();
+  state.windowBounds = mainWindow.getBounds();
+  saveState(state);
+}
+
 function saveState(state) {
   ensureDataDir();
   try {
@@ -58,9 +66,14 @@ function saveState(state) {
 }
 
 function createWindow() {
+  const state = loadState();
+  const bounds = state.windowBounds || { width: 1200, height: 800 };
+  
   mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    width: bounds.width,
+    height: bounds.height,
+    x: bounds.x,
+    y: bounds.y,
     minWidth: 900,
     minHeight: 600,
     webPreferences: {
@@ -78,6 +91,10 @@ function createWindow() {
 
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
+  });
+
+  mainWindow.on('close', () => {
+    saveWindowBounds();
   });
 
   mainWindow.on('closed', () => {
