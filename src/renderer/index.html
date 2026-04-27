@@ -213,6 +213,37 @@
       border-color: var(--accent-primary);
     }
 
+    .font-size-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .font-btn {
+      width: 32px;
+      height: 32px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .font-btn:hover {
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+    }
+
+    .font-size-value {
+      font-size: 14px;
+      font-weight: 600;
+      min-width: 40px;
+      text-align: center;
+    }
+
     .main-content {
       flex: 1;
       margin-left: 320px;
@@ -753,6 +784,14 @@
               <option value="20">20 Haber</option>
             </select>
           </div>
+          <div class="option-item">
+            <span class="option-label">Yazi Buyuklugu</span>
+            <div class="font-size-controls">
+              <button class="font-btn" id="fontDecrease" onclick="changeFontSize(-2)">A-</button>
+              <span class="font-size-value" id="fontSizeValue">16px</span>
+              <button class="font-btn" id="fontIncrease" onclick="changeFontSize(2)">A+</button>
+            </div>
+          </div>
         </div>
       </div>
     </aside>
@@ -792,7 +831,8 @@
       enabledSources: [],
       sortOrder: 'desc',
       itemsPerPage: 10,
-      currentPage: 1
+      currentPage: 1,
+      fontSize: 16
     };
     let allNews = [];
     let isLoading = false;
@@ -887,10 +927,25 @@
     function applyState() {
       document.getElementById('sortOrder').value = currentState.sortOrder;
       document.getElementById('itemsPerPage').value = currentState.itemsPerPage;
+      document.getElementById('fontSizeValue').textContent = currentState.fontSize + 'px';
+      applyFontSize(currentState.fontSize);
     }
 
     async function saveState() {
       await window.electronAPI.saveState(currentState);
+    }
+
+    function applyFontSize(size) {
+      document.getElementById('modalContent').style.fontSize = size + 'px';
+    }
+
+    async function changeFontSize(delta) {
+      let newSize = (currentState.fontSize || 16) + delta;
+      newSize = Math.max(12, Math.min(28, newSize));
+      currentState.fontSize = newSize;
+      document.getElementById('fontSizeValue').textContent = newSize + 'px';
+      applyFontSize(newSize);
+      await window.electronAPI.setFontSize(newSize);
     }
 
     async function fetchNews() {

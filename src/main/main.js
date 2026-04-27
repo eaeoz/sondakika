@@ -27,7 +27,8 @@ const defaultState = {
   sortOrder: 'desc',
   itemsPerPage: 10,
   currentPage: 1,
-  windowBounds: null
+  windowBounds: null,
+  fontSize: 16
 };
 
 function ensureDataDir() {
@@ -196,6 +197,13 @@ ipcMain.handle('get-state', () => {
 });
 
 ipcMain.handle('save-state', (event, state) => {
+  saveState(state);
+  return true;
+});
+
+ipcMain.handle('set-font-size', (event, fontSize) => {
+  const state = loadState();
+  state.fontSize = fontSize;
   saveState(state);
   return true;
 });

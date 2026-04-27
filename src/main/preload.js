@@ -5,5 +5,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getState: () => ipcRenderer.invoke('get-state'),
   saveState: (state) => ipcRenderer.invoke('save-state', state),
   fetchNews: (enabledSources, sortOrder) => ipcRenderer.invoke('fetch-news', enabledSources, sortOrder),
-  openExternal: (url) => ipcRenderer.invoke('open-external', url)
+  openExternal: (url) => ipcRenderer.invoke('open-external', url),
+  setFontSize: (fontSize) => ipcRenderer.invoke('set-font-size', fontSize)
 });
