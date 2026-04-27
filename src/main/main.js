@@ -4,6 +4,8 @@ const fs = require('fs');
 const Parser = require('rss-parser');
 
 let mainWindow;
+let articleWindow = null;
+let articleWindowData = { newsItems: [], currentIndex: 0 };
 const parser = new Parser({
   timeout: 10000,
   requestOptions: {
@@ -302,5 +304,74 @@ ipcMain.handle('fetch-news', async (event, enabledSources, sortOrder) => {
 
 ipcMain.handle('open-external', async (event, url) => {
   await shell.openExternal(url);
+  return true;
+});
+
+// ── Article View Window ────────────────────────────────────────────────────
+ipcMain.handle('open-article-view', async (event, newsItems, currentIndex) => {
+  // If already open, just update data and focus
+  if (articleWindow && !articleWindow.isDestroyed()) {
+    articleWindowData = { newsItems, currentIndex };
+    articleWindow.focus();
+    articleWindow.webContents.send('article-view-navigate', { newsItems, currentIndex });
+    return true;
+  }
+
+  articleWindowData = { newsItems, currentIndex };
+
+  const state = loadState();
+  const mainBounds = mainWindow ? mainWindow.getBounds() : { width: 1200, height: 800, x: 100, y: 50 };
+
+  articleWindow = new BrowserWindow({
+    width:  mainBounds.width,
+    height: mainBounds.height,
+    x:      mainBounds.x,
+    y:      mainBounds.y,
+    minWidth:  700,
+    minHeight: 500,
+    parent: mainWindow,
+    webPreferences: {
+      preload: path.join(__dirname, 'article-preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false
+    },
+    backgroundColor: '#0f0f1a',
+    show: false,
+    frame: true,
+    autoHideMenuBar: true,
+    title: 'Haber Görüntüle'
+  });
+
+  articleWindow.loadFile(path.join(__dirname, '../renderer/article-view.html'));
+
+  articleWindow.once('ready-to-show', () => {
+    articleWindow.show();
+    // Hide the main window while article view is open
+    if (mainWindow && !mainWindow.isDestroyed()) mainWindow.hide();
+  });
+
+  articleWindow.on('closed', () => {
+    articleWindow = null;
+    // Restore main window and signal which index was last viewed
+    if (mainWindow && !mainWindow.isDestroyed()) {
+      mainWindow.show();
+      mainWindow.focus();
+      mainWindow.webContents.send('article-view-closed', articleWindowData.currentIndex);
+    }
+  });
+
+  return true;
+});
+
+ipcMain.handle('article-view-get-data', () => {
+  return articleWindowData;
+});
+
+ipcMain.handle('article-view-close', (event, currentIndex) => {
+  // Update last-known index before closing
+  articleWindowData.currentIndex = currentIndex;
+  if (articleWindow && !articleWindow.isDestroyed()) {
+    articleWindow.close();
+  }
   return true;
 });

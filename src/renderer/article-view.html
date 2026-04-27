@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;">
+  <title>Haber Görüntüle</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg-primary:   #0f0f1a;
+      --bg-secondary: #1a1a2e;
+      --bg-card:      #252542;
+      --bg-elevated:  #2d2d4a;
+      --accent:       #6366f1;
+      --accent-sec:   #818cf8;
+      --accent-hover: #4f46e5;
+      --text-primary: #f1f5f9;
+      --text-sec:     #94a3b8;
+      --text-muted:   #64748b;
+      --border:       #334155;
+      --breaking:     #ef4444;
+      --error:        #ef4444;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 24px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      -webkit-app-region: drag;
+    }
+
+    .topbar > * { -webkit-app-region: no-drag; }
+
+    .topbar-source {
+      padding: 4px 10px;
+      background: var(--bg-card);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-sec);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .topbar-source.breaking {
+      background: rgba(239,68,68,0.15);
+      color: var(--breaking);
+    }
+
+    .topbar-title {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .topbar-date {
+      font-size: 12px;
+      color: var(--accent-sec);
+      background: rgba(99,102,241,0.15);
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-weight: 600;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .topbar-counter {
+      font-size: 12px;
+      color: var(--text-muted);
+      background: var(--bg-card);
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-weight: 600;
+      white-space: nowrap;
+      flex-shrink: 0;
+      border: 1px solid var(--border);
+    }
+
+    /* ── Scrollable content area ── */
+    .article-scroll {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+    }
+
+    .article-inner {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 40px 48px 60px;
+    }
+
+    .article-hero {
+      margin-bottom: 32px;
+    }
+
+    .article-headline {
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.4;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+    }
+
+    .article-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .tag {
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .tag-source {
+      background: var(--bg-card);
+      color: var(--text-sec);
+      border: 1px solid var(--border);
+    }
+    .tag-breaking {
+      background: rgba(239,68,68,0.15);
+      color: var(--breaking);
+    }
+
+    .article-image {
+      width: 100%;
+      max-height: 360px;
+      object-fit: cover;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+      margin-bottom: 32px;
+      display: block;
+    }
+
+    .article-body {
+      font-size: 17px;
+      line-height: 2;
+      color: var(--text-sec);
+      white-space: pre-wrap;
+    }
+    .article-body::first-letter { margin-left: 28px; }
+
+    /* ── Bottom nav bar ── */
+    .bottombar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 24px;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+      min-width: 110px;
+      justify-content: center;
+    }
+    .nav-btn:hover {
+      background: var(--bg-elevated);
+      border-color: var(--accent);
+      color: var(--accent-sec);
+    }
+    .nav-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .return-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: rgba(99,102,241,0.15);
+      border: 1px solid rgba(99,102,241,0.4);
+      border-radius: 10px;
+      color: var(--accent-sec);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    .return-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    .open-browser-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text-sec);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    .open-browser-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    .center-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Keys hint */
+    .keys-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+    .keys-hint kbd {
+      display: inline-block;
+      padding: 1px 6px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 10px;
+      margin: 0 2px;
+    }
+
+    /* Slide animations */
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(60px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-60px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .slide-right { animation: slideInRight 0.25s cubic-bezier(0.22,1,0.36,1); }
+    .slide-left  { animation: slideInLeft  0.25s cubic-bezier(0.22,1,0.36,1); }
+
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <span class="topbar-source" id="tbSource"></span>
+    <span class="topbar-title"  id="tbTitle"></span>
+    <span class="topbar-date"   id="tbDate"></span>
+    <span class="topbar-counter" id="tbCounter"></span>
+  </div>
+
+  <!-- Scrollable article -->
+  <div class="article-scroll" id="articleScroll">
+    <div class="article-inner" id="articleInner">
+      <div class="article-hero">
+        <h1 class="article-headline" id="artHeadline"></h1>
+        <div class="article-meta-row" id="artMeta"></div>
+      </div>
+      <img id="artImage" class="article-image" style="display:none" />
+      <div class="article-body" id="artBody"></div>
+    </div>
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="bottombar">
+    <button class="nav-btn" id="prevBtn">← Önceki</button>
+
+    <div class="center-group">
+      <button class="return-btn" id="returnBtn">↩ Modala Dön</button>
+      <button class="open-browser-btn" id="browserBtn">🌐 Tarayıcıda Aç</button>
+      <div class="keys-hint">
+        <kbd>↑</kbd><kbd>↓</kbd> Kaydır &nbsp;
+        <kbd>←</kbd><kbd>→</kbd> Haber &nbsp;
+        <kbd>Enter</kbd> Geri dön
+      </div>
+    </div>
+
+    <button class="nav-btn" id="nextBtn">Sonraki →</button>
+  </div>
+
+  <script>
+    let newsItems   = [];
+    let currentIdx  = 0;
+    let currentUrl  = '';
+
+    // ── Render helpers ──────────────────────────────────────────────
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return '';
+      return d.toLocaleDateString('tr-TR', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+      });
+    }
+
+    function renderArticle(idx, slideDir) {
+      const news = newsItems[idx];
+      if (!news) return;
+      currentIdx = idx;
+      currentUrl = news.link || '';
+
+      // Slide animation on the inner container
+      const inner = document.getElementById('articleInner');
+      inner.classList.remove('slide-right', 'slide-left');
+      void inner.offsetWidth; // reflow
+      if (slideDir === 'right') inner.classList.add('slide-right');
+      else if (slideDir === 'left') inner.classList.add('slide-left');
+
+      // Reset scroll to top
+      document.getElementById('articleScroll').scrollTop = 0;
+
+      // Top-bar
+      const tbSource = document.getElementById('tbSource');
+      tbSource.textContent = news.sourceName || '';
+      tbSource.className   = 'topbar-source' + (news.isSondakika ? ' breaking' : '');
+      document.getElementById('tbTitle').textContent   = news.title || '';
+      document.getElementById('tbDate').textContent    = formatDate(news.pubDate || news.isoDate);
+      document.getElementById('tbCounter').textContent = `${idx + 1} / ${newsItems.length}`;
+
+      // Headline
+      document.getElementById('artHeadline').textContent = news.title || '';
+
+      // Meta row
+      const metaRow = document.getElementById('artMeta');
+      metaRow.innerHTML = `
+        <span class="tag tag-source">${news.sourceName || ''}</span>
+        ${news.isSondakika ? '<span class="tag tag-breaking">SON DAKİKA</span>' : ''}
+        <span style="font-size:12px;color:var(--accent-sec);background:rgba(99,102,241,0.15);padding:5px 12px;border-radius:6px;font-weight:600;">
+          🕒 ${formatDate(news.pubDate || news.isoDate)}
+        </span>`;
+
+      // Image
+      const img = document.getElementById('artImage');
+      if (news.imageUrl) {
+        img.src   = news.imageUrl;
+        img.style.display = 'block';
+        img.onerror = () => { img.style.display = 'none'; };
+      } else {
+        img.style.display = 'none';
+      }
+
+      // Body
+      let content = news.fullContent || news.content || news.summary
+                    || news.contentSnippet || news.description || news.title || 'İçerik bulunmuyor.';
+      content = content.replace(/<img[^>]*>/gi, '')
+                       .replace(/<a[^>]*>/gi, '')
+                       .replace(/<\/a>/gi, '')
+                       .trim();
+      document.getElementById('artBody').textContent = content;
+
+      // Button states
+      document.getElementById('prevBtn').disabled = idx === 0;
+      document.getElementById('nextBtn').disabled = idx === newsItems.length - 1;
+    }
+
+    // ── Navigation ──────────────────────────────────────────────────
+    function navigate(direction) {
+      const next = currentIdx + direction;
+      if (next >= 0 && next < newsItems.length) {
+        renderArticle(next, direction > 0 ? 'right' : 'left');
+      }
+    }
+
+    function returnToModal() {
+      window.articleAPI.closeView(currentIdx);
+    }
+
+    // ── Keyboard ────────────────────────────────────────────────────
+    document.addEventListener('keydown', (e) => {
+      const scroll = document.getElementById('articleScroll');
+
+      switch (e.key) {
+        case 'ArrowDown':
+        case ' ':
+          e.preventDefault();
+          scroll.scrollBy({ top: 140, behavior: 'smooth' });
+          break;
+        case 'ArrowUp':
+          e.preventDefault();
+          scroll.scrollBy({ top: -140, behavior: 'smooth' });
+          break;
+        case 'PageDown':
+          e.preventDefault();
+          scroll.scrollBy({ top: scroll.clientHeight * 0.85, behavior: 'smooth' });
+          break;
+        case 'PageUp':
+          e.preventDefault();
+          scroll.scrollBy({ top: -scroll.clientHeight * 0.85, behavior: 'smooth' });
+          break;
+        case 'Home':
+          e.preventDefault();
+          scroll.scrollTo({ top: 0, behavior: 'smooth' });
+          break;
+        case 'End':
+          e.preventDefault();
+          scroll.scrollTo({ top: scroll.scrollHeight, behavior: 'smooth' });
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          navigate(1);
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          navigate(-1);
+          break;
+        case 'Enter':
+        case 'Escape':
+          e.preventDefault();
+          returnToModal();
+          break;
+      }
+    });
+
+    // ── Button wiring ───────────────────────────────────────────────
+    document.getElementById('prevBtn').addEventListener('click', () => navigate(-1));
+    document.getElementById('nextBtn').addEventListener('click', () => navigate(1));
+    document.getElementById('returnBtn').addEventListener('click', returnToModal);
+    document.getElementById('browserBtn').addEventListener('click', () => {
+      if (currentUrl) window.articleAPI.openExternal(currentUrl);
+    });
+
+    // ── Bootstrap ───────────────────────────────────────────────────
+    async function init() {
+      const data = await window.articleAPI.getArticleData();
+      newsItems  = data.newsItems || [];
+      const startIdx = data.currentIndex || 0;
+      renderArticle(startIdx);
+    }
+
+    init();
+  </script>
+</body>
+</html>
