@@ -10,7 +10,7 @@ const stateFile = path.join(dataDir, 'state.json');
 
 const sources = {
   ntv: { name: 'NTV', url: 'https://www.ntv.com.tr/son-dakika.rss', isSondakika: true },
-  cumhuriyet: { name: 'Cumhuriyet', url: 'http://www.cumhuriyet.com.tr/rss/son_dakika.xml', isSondakika: true },
+  cumhuriyet: { name: 'Cumhuriyet', url: 'https://www.cumhuriyet.com.tr/rss/son_dakika.xml', isSondakika: true },
   trt: { name: 'TRT Haber', url: 'https://www.trthaber.com/sondakika.rss', isSondakika: true },
   mynet: { name: 'Mynet', url: 'https://www.mynet.com/haber/rss/sondakika', isSondakika: true },
   sabah: { name: 'Sabah', url: 'https://www.sabah.com.tr/rss/anasayfa.xml', isSondakika: false },
@@ -115,7 +115,9 @@ async function fetchAllNews(enabledSources) {
 
 function cleanHtml(html) {
   if (!html) return '';
-  return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim();
+  let text = html.replace(/<p[^>]*>/gi, '\n\n').replace(/<\/p>/gi, '').replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]*>/g, '');
+  text = text.replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim();
+  return text;
 }
 
 function sortNews(items, sortOrder) {
