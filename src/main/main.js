@@ -162,18 +162,39 @@ async function fetchAllNews(enabledSources) {
     try {
       const feed = await parser.parseURL(source.url);
       const items = feed.items.map(item => {
-        let fullContent = item['content:encoded'] || item.content || item.contentSnippet || item.summary || item.description || '';
-        const strippedContent = cleanHtml(fullContent);
-        if (!strippedContent || strippedContent.length < 50) {
-          fullContent = item.content || item['content:encoded'] || item.title || '';
+        const fields = [
+          item['content:encoded'],
+          item.content,
+          item.contentSnippet,
+          item.summary,
+          item.description
+        ];
+        
+        let bestContent = '';
+        let bestContentRaw = '';
+        
+        for (const field of fields) {
+          if (field) {
+            const cleaned = cleanHtml(field);
+            if (cleaned.length > bestContent.length) {
+              bestContent = cleaned;
+              bestContentRaw = field;
+            }
+          }
         }
-        const imageUrl = extractImage(item, fullContent, sourceKey);
+        
+        if (!bestContent || bestContent.length < 50) {
+          bestContent = item.title || '';
+          bestContentRaw = item.title || '';
+        }
+        
+        const imageUrl = extractImage(item, bestContentRaw, sourceKey);
         return {
           ...item,
           sourceKey,
           sourceName: source.name,
           isSondakika: source.isSondakika,
-          fullContent: cleanHtml(fullContent),
+          fullContent: bestContent,
           imageUrl,
           newsTitle: item.title
         };
