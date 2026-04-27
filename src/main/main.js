@@ -152,6 +152,24 @@ function extractImage(item, contentHtml, sourceKey) {
   return null;
 }
 
+/**
+ * CNN Türk and Yeni Şafak publish their pubDate as local Turkey time
+ * but label it as "GMT", e.g. "Mon, 27 Apr 2026 11:42:44 GMT" when
+ * the actual UTC time is 08:42:44.
+ * We detect these sources and subtract 3 hours (UTC+3 offset) to get
+ * the correct UTC timestamp, then re-format as ISO string.
+ */
+const WRONG_TZ_SOURCES = new Set(['cnnturk', 'yenisafak']);
+
+function fixPublishedDate(dateStr, sourceKey) {
+  if (!dateStr) return dateStr;
+  if (!WRONG_TZ_SOURCES.has(sourceKey)) return dateStr;
+  const ts = Date.parse(dateStr);
+  if (isNaN(ts)) return dateStr;
+  // Subtract 3 hours to convert fake-GMT back to real UTC
+  return new Date(ts - 3 * 60 * 60 * 1000).toISOString();
+}
+
 async function fetchAllNews(enabledSources) {
   const results = [];
 
@@ -191,6 +209,8 @@ async function fetchAllNews(enabledSources) {
         const imageUrl = extractImage(item, bestContentRaw, sourceKey);
         return {
           ...item,
+          pubDate: fixPublishedDate(item.pubDate, sourceKey),
+          isoDate: fixPublishedDate(item.isoDate, sourceKey),
           sourceKey,
           sourceName: source.name,
           isSondakika: source.isSondakika,
