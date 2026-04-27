@@ -1058,6 +1058,7 @@
       pag.classList.remove('hidden');
       let html = '';
 
+      html += `<button class="page-btn" onclick="changePage(1)" ${currentState.currentPage === 1 ? 'disabled' : ''}>«</button>`;
       html += `<button class="page-btn" onclick="changePage(${currentState.currentPage - 1})" ${currentState.currentPage === 1 ? 'disabled' : ''}>‹</button>`;
 
       for (let i = 1; i <= totalPages; i++) {
@@ -1069,6 +1070,7 @@
       }
 
       html += `<button class="page-btn" onclick="changePage(${currentState.currentPage + 1})" ${currentState.currentPage === totalPages ? 'disabled' : ''}>›</button>`;
+      html += `<button class="page-btn" onclick="changePage(${totalPages})" ${currentState.currentPage === totalPages ? 'disabled' : ''}>»</button>`;
 
       pag.innerHTML = html;
     }
