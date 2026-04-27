@@ -1300,6 +1300,7 @@
       }
 
       document.getElementById('modalOverlay').classList.add('active');
+      document.body.style.overflow = 'hidden';
     }
 
     window.navigateModal = function(direction) {
@@ -1314,6 +1315,7 @@
 
     function closeModal() {
       document.getElementById('modalOverlay').classList.remove('active');
+      document.body.style.overflow = '';
       currentModalIndex = -1;
     }
 
@@ -1329,6 +1331,18 @@
     document.addEventListener('keydown', (e) => {
       const overlay = document.getElementById('modalOverlay');
       if (!overlay.classList.contains('active')) return;
+
+      // Always block scroll-triggering keys from reaching the background
+      const scrollKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' ', 'PageUp', 'PageDown', 'Home', 'End'];
+      if (scrollKeys.includes(e.key)) e.preventDefault();
+
+      // ArrowUp/Down: manually scroll the modal body so it still works inside the modal
+      const modalBody = document.getElementById('modalBody');
+      if (e.key === 'ArrowDown' || e.key === ' ') modalBody.scrollBy({ top: 120, behavior: 'smooth' });
+      if (e.key === 'ArrowUp') modalBody.scrollBy({ top: -120, behavior: 'smooth' });
+      if (e.key === 'PageDown') modalBody.scrollBy({ top: modalBody.clientHeight * 0.8, behavior: 'smooth' });
+      if (e.key === 'PageUp') modalBody.scrollBy({ top: -modalBody.clientHeight * 0.8, behavior: 'smooth' });
+
       if (e.key === 'Escape') closeModal();
       if (e.key === 'ArrowRight') navigateModal(1);
       if (e.key === 'ArrowLeft') navigateModal(-1);
