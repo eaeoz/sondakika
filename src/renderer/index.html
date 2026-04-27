@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:;">
+  <title>Sondakika - Haber Okuyucu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-primary: #0f0f1a;
+      --bg-secondary: #1a1a2e;
+      --bg-card: #252542;
+      --bg-elevated: #2d2d4a;
+      --accent-primary: #6366f1;
+      --accent-secondary: #818cf8;
+      --accent-hover: #4f46e5;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --border-color: #334155;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --breaking: #ef4444;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .app-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      width: 320px;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+    }
+
+    .sidebar-header {
+      padding: 24px 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 42px;
+      height: 42px;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .logo-text {
+      font-size: 20px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sidebar-section {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .sources-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .source-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      background: var(--bg-card);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+    }
+
+    .source-item:hover {
+      background: var(--bg-elevated);
+      border-color: var(--border-color);
+    }
+
+    .source-item.selected {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: var(--accent-primary);
+    }
+
+    .source-item INPUT[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      border-radius: 5px;
+      border: 2px solid var(--border-color);
+      background: transparent;
+      cursor: pointer;
+      appearance: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .source-item INPUT[type="checkbox"]:checked {
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+    }
+
+    .source-item INPUT[type="checkbox"]:checked::after {
+      content: '✓';
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .source-name {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .source-badge {
+      margin-left: auto;
+      padding: 3px 8px;
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--breaking);
+      font-size: 10px;
+      font-weight: 600;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .options-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .option-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: var(--bg-card);
+      border-radius: 10px;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .option-item:hover {
+      border-color: var(--border-color);
+    }
+
+    .option-label {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .option-select {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .option-select:focus {
+      border-color: var(--accent-primary);
+    }
+
+    .main-content {
+      flex: 1;
+      margin-left: 320px;
+      padding: 32px 40px;
+      min-height: 100vh;
+    }
+
+    .content-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 32px;
+    }
+
+    .header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .page-title {
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .page-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .refresh-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      background: var(--accent-primary);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .refresh-btn:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    .refresh-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: var(--bg-card);
+      border-radius: 8px;
+      font-size: 13px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    .status-dot.loading {
+      background: var(--warning);
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .news-grid {
+      display: grid;
+      gap: 20px;
+    }
+
+    .news-card {
+      background: var(--bg-card);
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid var(--border-color);
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+
+    .news-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent-primary);
+      box-shadow: 0 12px 40px rgba(99, 102, 241, 0.15);
+    }
+
+    .news-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .news-source {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .source-tag {
+      padding: 5px 12px;
+      background: var(--bg-elevated);
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .source-tag.breaking {
+      background: rgba(239, 68, 68, 0.15);
+      color: var(--breaking);
+    }
+
+    .news-date {
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .news-title {
+      font-size: 17px;
+      font-weight: 600;
+      line-height: 1.5;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+
+    .news-summary {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .news-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .read-more {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 40px;
+    }
+
+    .page-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .page-btn:hover:not(:disabled) {
+      background: var(--bg-elevated);
+      border-color: var(--accent-primary);
+    }
+
+    .page-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .page-btn.active {
+      background: var(--accent-primary);
+      border-color: var(--accent-primary);
+    }
+
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 40px;
+      text-align: center;
+    }
+
+    .empty-icon {
+      width: 100px;
+      height: 100px;
+      background: var(--bg-card);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      margin-bottom: 24px;
+    }
+
+    .empty-title {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .empty-text {
+      font-size: 15px;
+      color: var(--text-secondary);
+      max-width: 360px;
+    }
+
+    .loading-grid {
+      display: grid;
+      gap: 20px;
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-elevated) 50%, var(--bg-card) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 8px;
+    }
+
+    .skeleton-card {
+      height: 180px;
+      border-radius: 16px;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-secondary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-color);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <div class="logo-icon">📰</div>
+          <span class="logo-text">Sondakika</span>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="section-title">Haber Kaynaklari</div>
+        <div class="sources-list" id="sourcesList"></div>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="section-title">Secenekler</div>
+        <div class="options-grid">
+          <div class="option-item">
+            <span class="option-label">Sirala</span>
+            <select class="option-select" id="sortOrder">
+              <option value="desc">En Yeni (Önce)</option>
+              <option value="asc">En Eski (Önce)</option>
+            </select>
+          </div>
+          <div class="option-item">
+            <span class="option-label">Sayfa Basina</span>
+            <select class="option-select" id="itemsPerPage">
+              <option value="5">5 Haber</option>
+              <option value="10" selected>10 Haber</option>
+              <option value="15">15 Haber</option>
+              <option value="20">20 Haber</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="content-header">
+        <div class="header-left">
+          <h1 class="page-title">Haberler</h1>
+          <p class="page-subtitle" id="newsCount">Yukleniyor...</p>
+        </div>
+        <div class="header-actions">
+          <div class="status-badge">
+            <span class="status-dot" id="statusDot"></span>
+            <span id="statusText">Hazir</span>
+          </div>
+          <button class="refresh-btn" id="refreshBtn">🔄 Yenile</button>
+        </div>
+      </div>
+
+      <div id="newsContainer">
+        <div class="loading-grid" id="loadingGrid"></div>
+        <div class="news-grid hidden" id="newsGrid"></div>
+        <div class="empty-state hidden" id="emptyState">
+          <div class="empty-icon">📭</div>
+          <h2 class="empty-title">Haber Kaynagi Secin</h2>
+          <p class="empty-text">Lutfen en az bir haber kaynagi seciniz ve yenile butonuna basiniz.</p>
+        </div>
+      </div>
+
+      <div class="pagination hidden" id="pagination"></div>
+    </main>
+  </div>
+
+  <script>
+    let sources = {};
+    let currentState = {
+      enabledSources: [],
+      sortOrder: 'desc',
+      itemsPerPage: 10,
+      currentPage: 1
+    };
+    let allNews = [];
+    let isLoading = false;
+
+    async function init() {
+      sources = await window.electronAPI.getSources();
+      const state = await window.electronAPI.getState();
+      currentState = { ...currentState, ...state };
+
+      renderSources();
+      setupEventListeners();
+      applyState();
+
+      if (currentState.enabledSources.length > 0) {
+        await fetchNews();
+      } else {
+        showEmptyState();
+      }
+    }
+
+    function renderSources() {
+      const container = document.getElementById('sourcesList');
+      container.innerHTML = '';
+
+      Object.entries(sources).forEach(([key, source]) => {
+        const item = document.createElement('div');
+        item.className = 'source-item';
+        item.dataset.key = key;
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = currentState.enabledSources.includes(key);
+
+        const name = document.createElement('span');
+        name.className = 'source-name';
+        name.textContent = source.name;
+
+        item.appendChild(checkbox);
+        item.appendChild(name);
+
+        if (source.isSondakika) {
+          const badge = document.createElement('span');
+          badge.className = 'source-badge';
+          badge.textContent = 'SON DAKIKA';
+          item.appendChild(badge);
+        }
+
+        container.appendChild(item);
+      });
+    }
+
+    function setupEventListeners() {
+      document.getElementById('sourcesList').addEventListener('change', async (e) => {
+        if (e.target.type === 'checkbox') {
+          const key = e.target.closest('.source-item').dataset.key;
+          if (e.target.checked) {
+            if (!currentState.enabledSources.includes(key)) {
+              currentState.enabledSources.push(key);
+            }
+          } else {
+            currentState.enabledSources = currentState.enabledSources.filter(s => s !== key);
+          }
+          await saveState();
+          if (currentState.enabledSources.length > 0) {
+            await fetchNews();
+          } else {
+            showEmptyState();
+          }
+        }
+      });
+
+      document.getElementById('sortOrder').addEventListener('change', async (e) => {
+        currentState.sortOrder = e.target.value;
+        await saveState();
+        if (allNews.length > 0) {
+          await fetchNews();
+        }
+      });
+
+      document.getElementById('itemsPerPage').addEventListener('change', async (e) => {
+        currentState.itemsPerPage = parseInt(e.target.value);
+        currentState.currentPage = 1;
+        await saveState();
+        renderNews();
+      });
+
+      document.getElementById('refreshBtn').addEventListener('click', async () => {
+        await fetchNews();
+      });
+    }
+
+    function applyState() {
+      document.getElementById('sortOrder').value = currentState.sortOrder;
+      document.getElementById('itemsPerPage').value = currentState.itemsPerPage;
+    }
+
+    async function saveState() {
+      await window.electronAPI.saveState(currentState);
+    }
+
+    async function fetchNews() {
+      if (isLoading) return;
+
+      isLoading = true;
+      setLoading(true);
+
+      try {
+        allNews = await window.electronAPI.fetchNews(
+          currentState.enabledSources,
+          currentState.sortOrder
+        );
+        currentState.currentPage = 1;
+        await saveState();
+        renderNews();
+      } catch (err) {
+        console.error('Haberler alinirken hata:', err);
+      } finally {
+        isLoading = false;
+        setLoading(false);
+      }
+    }
+
+    function setLoading(loading) {
+      const dot = document.getElementById('statusDot');
+      const text = document.getElementById('statusText');
+      const btn = document.getElementById('refreshBtn');
+
+      if (loading) {
+        dot.classList.add('loading');
+        text.textContent = 'Yukleniyor...';
+        btn.disabled = true;
+      } else {
+        dot.classList.remove('loading');
+        text.textContent = 'Hazir';
+        btn.disabled = false;
+      }
+    }
+
+    function renderNews() {
+      const grid = document.getElementById('newsGrid');
+      const empty = document.getElementById('emptyState');
+      const loading = document.getElementById('loadingGrid');
+      const pag = document.getElementById('pagination');
+
+      if (allNews.length === 0) {
+        grid.classList.add('hidden');
+        pag.classList.add('hidden');
+        empty.classList.remove('hidden');
+        document.getElementById('newsCount').textContent = 'Kaynak secilmedi';
+        return;
+      }
+
+      empty.classList.add('hidden');
+      loading.classList.add('hidden');
+      grid.classList.remove('hidden');
+
+      const start = (currentState.currentPage - 1) * currentState.itemsPerPage;
+      const end = start + currentState.itemsPerPage;
+      const pageNews = allNews.slice(start, end);
+      const totalPages = Math.ceil(allNews.length / currentState.itemsPerPage);
+
+      document.getElementById('newsCount').textContent = `${allNews.length} haber • Sayfa ${currentState.currentPage}/${totalPages}`;
+
+      grid.innerHTML = pageNews.map(news => {
+        const date = formatDate(news.pubDate || news.isoDate);
+        const summary = news.summary || news.contentSnippet || '';
+
+        return `
+          <article class="news-card" onclick="window.open('${news.link}', '_blank')">
+            <div class="news-card-header">
+              <div class="news-source">
+                <span class="source-tag ${news.isSondakika ? 'breaking' : ''}">${news.sourceName}</span>
+              </div>
+              <span class="news-date">📅 ${date}</span>
+            </div>
+            <h2 class="news-title">${escapeHtml(news.title)}</h2>
+            <p class="news-summary">${escapeHtml(summary)}</p>
+            <div class="news-card-footer">
+              <span class="read-more">Habere git →</span>
+            </div>
+          </article>
+        `;
+      }).join('');
+
+      renderPagination(totalPages);
+    }
+
+    function renderPagination(totalPages) {
+      const pag = document.getElementById('pagination');
+
+      if (totalPages <= 1) {
+        pag.classList.add('hidden');
+        return;
+      }
+
+      pag.classList.remove('hidden');
+      let html = '';
+
+      html += `<button class="page-btn" onclick="changePage(${currentState.currentPage - 1})" ${currentState.currentPage === 1 ? 'disabled' : ''}>‹</button>`;
+
+      for (let i = 1; i <= totalPages; i++) {
+        if (i === 1 || i === totalPages || (i >= currentState.currentPage - 1 && i <= currentState.currentPage + 1)) {
+          html += `<button class="page-btn ${i === currentState.currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+        } else if (i === currentState.currentPage - 2 || i === currentState.currentPage + 2) {
+          html += `<span style="color: var(--text-muted);">...</span>`;
+        }
+      }
+
+      html += `<button class="page-btn" onclick="changePage(${currentState.currentPage + 1})" ${currentState.currentPage === totalPages ? 'disabled' : ''}>›</button>`;
+
+      pag.innerHTML = html;
+    }
+
+    window.changePage = async function(page) {
+      currentState.currentPage = page;
+      renderNews();
+      await saveState();
+    };
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return '';
+
+      return date.toLocaleDateString('tr-TR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function showEmptyState() {
+      document.getElementById('loadingGrid').classList.add('hidden');
+      document.getElementById('newsGrid').classList.add('hidden');
+      document.getElementById('pagination').classList.add('hidden');
+      document.getElementById('emptyState').classList.remove('hidden');
+      document.getElementById('newsCount').textContent = 'Kaynak secilmedi';
+    }
+
+    function showLoading() {
+      const loading = document.getElementById('loadingGrid');
+      loading.classList.remove('hidden');
+      loading.innerHTML = Array(5).fill('<div class="skeleton skeleton-card"></div>').join('');
+    }
+
+    showLoading();
+    init();
+  </script>
+</body>
+</html>
