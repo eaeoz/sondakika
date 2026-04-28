@@ -638,19 +638,19 @@
             </select>
           </div>
           <div class="option-item">
-            <span class="option-label">Başlık Yazısı</span>
+            <span class="option-label">Başlık <kbd>1</kbd><kbd>2</kbd></span>
             <div class="font-size-controls">
-              <button class="font-btn" id="titleFontDec" onclick="changeTitleFontSize(-1)">A-</button>
+              <button class="font-btn" id="titleFontDec" onclick="changeTitleFontSize(-1)">−</button>
               <span class="font-size-value" id="titleFontSizeValue">17px</span>
-              <button class="font-btn" id="titleFontInc" onclick="changeTitleFontSize(1)">A+</button>
+              <button class="font-btn" id="titleFontInc" onclick="changeTitleFontSize(1)">+</button>
             </div>
           </div>
           <div class="option-item">
-            <span class="option-label">İçerik Yazısı</span>
+            <span class="option-label">İçerik <kbd>3</kbd><kbd>4</kbd></span>
             <div class="font-size-controls">
-              <button class="font-btn" id="contentFontDec" onclick="changeContentFontSize(-1)">A-</button>
+              <button class="font-btn" id="contentFontDec" onclick="changeContentFontSize(-1)">−</button>
               <span class="font-size-value" id="contentFontSizeValue">14px</span>
-              <button class="font-btn" id="contentFontInc" onclick="changeContentFontSize(1)">A+</button>
+              <button class="font-btn" id="contentFontInc" onclick="changeContentFontSize(1)">+</button>
             </div>
           </div>
           <div class="option-item">
@@ -696,6 +696,8 @@
   <div class="keys-hint">
     <span><kbd>↑</kbd><kbd>↓</kbd> Seç</span>
     <span><kbd>←</kbd><kbd>→</kbd> Sayfa</span>
+    <span><kbd>1</kbd><kbd>2</kbd> Başlık</span>
+    <span><kbd>3</kbd><kbd>4</kbd> İçerik</span>
     <span><kbd>Enter</kbd> Görüntüle</span>
   </div>
 
@@ -864,6 +866,26 @@
               var globalIdx = startIdx + selectedIndex;
               openArticleView(globalIdx);
             }
+            break;
+
+          case '1':
+            e.preventDefault();
+            changeTitleFontSize(-1);
+            break;
+
+          case '2':
+            e.preventDefault();
+            changeTitleFontSize(1);
+            break;
+
+          case '3':
+            e.preventDefault();
+            changeContentFontSize(-1);
+            break;
+
+          case '4':
+            e.preventDefault();
+            changeContentFontSize(1);
             break;
         }
       });

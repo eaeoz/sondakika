@@ -368,17 +368,17 @@
     <!-- Font Control Bar -->
     <div class="font-bar">
       <div class="font-group">
-        <span class="font-group-label">Başlık</span>
-        <button class="font-btn" onclick="changeTitleFont(-1)">A-</button>
+        <span class="font-group-label">Başlık <kbd>1</kbd><kbd>2</kbd></span>
+        <button class="font-btn" onclick="changeTitleFont(-1)">−</button>
         <span class="font-value" id="titleFontVal">28px</span>
-        <button class="font-btn" onclick="changeTitleFont(1)">A+</button>
+        <button class="font-btn" onclick="changeTitleFont(1)">+</button>
       </div>
       <div class="font-separator"></div>
       <div class="font-group">
-        <span class="font-group-label">İçerik</span>
-        <button class="font-btn" onclick="changeContentFont(-1)">A-</button>
+        <span class="font-group-label">İçerik <kbd>3</kbd><kbd>4</kbd></span>
+        <button class="font-btn" onclick="changeContentFont(-1)">−</button>
         <span class="font-value" id="contentFontVal">17px</span>
-        <button class="font-btn" onclick="changeContentFont(1)">A+</button>
+        <button class="font-btn" onclick="changeContentFont(1)">+</button>
       </div>
     </div>
 
@@ -404,6 +404,8 @@
         <div class="keys-hint">
           <kbd>↑</kbd><kbd>↓</kbd> Kaydır &nbsp;
           <kbd>←</kbd><kbd>→</kbd> Haber &nbsp;
+          <kbd>1</kbd><kbd>2</kbd> Başlık &nbsp;
+          <kbd>3</kbd><kbd>4</kbd> İçerik &nbsp;
           <kbd>Enter</kbd> Listeye dön
         </div>
     </div>
@@ -577,6 +579,22 @@
         case 'Escape':
           e.preventDefault();
           returnToMain();
+          break;
+        case '1':
+          e.preventDefault();
+          changeTitleFont(-1);
+          break;
+        case '2':
+          e.preventDefault();
+          changeTitleFont(1);
+          break;
+        case '3':
+          e.preventDefault();
+          changeContentFont(-1);
+          break;
+        case '4':
+          e.preventDefault();
+          changeContentFont(1);
           break;
       }
     });
