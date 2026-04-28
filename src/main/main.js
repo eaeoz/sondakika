@@ -331,7 +331,7 @@ ipcMain.handle('open-article-view', async (event, newsItems, currentIndex) => {
     show: false,
     frame: true,
     autoHideMenuBar: true,
-    title: 'Haber Goruntule'
+      title: 'Sondakika'
   })
 
   articleWindow.loadFile(path.join(__dirname, '../renderer/article-view.html'))
