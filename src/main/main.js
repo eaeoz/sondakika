@@ -84,6 +84,7 @@ function createWindow() {
     y: bounds.y,
     minWidth: 900,
     minHeight: 600,
+    icon: path.join(__dirname, '../../assets/icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -321,6 +322,7 @@ ipcMain.handle('open-article-view', async (event, newsItems, currentIndex) => {
     y: mainBounds.y,
     minWidth:700,
     minHeight:500,
+    icon: path.join(__dirname, '../../assets/icon.png'),
     parent: mainWindow,
     webPreferences: {
       preload: path.join(__dirname, 'article-preload.js'),

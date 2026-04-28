@@ -131,4 +131,7 @@ ISC
 
 ## Author
 
-Sedat ERGOZ
+**Sedat Ergoz**
+
+- Email: sedatergoz@gmail.com
+- GitHub: [@eaeoz](https://github.com/eaeoz)

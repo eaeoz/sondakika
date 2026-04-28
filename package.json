@@ -3,7 +3,11 @@
   "version": "2.0.0",
   "description": "Modern Electron-based news reader with RSS feeds",
   "main": "src/main/main.js",
-  "author": "Sedat Ergoz",
+  "author": {
+    "name": "Sedat Ergoz",
+    "email": "sedatergoz@gmail.com",
+    "url": "https://github.com/eaeoz"
+  },
   "license": "ISC",
   "scripts": {
     "start": "electron .",
@@ -17,31 +21,39 @@
   },
   "devDependencies": {
     "electron": "^28.0.0",
-    "electron-builder": "^24.9.1"
+    "electron-builder": "^24.9.1",
+    "png-to-ico": "^3.0.1"
   },
   "build": {
     "appId": "com.sondakika.app",
     "productName": "Sondakika",
+    "copyright": "Copyright © 2024 Sedat Ergoz",
     "directories": {
       "output": "dist"
     },
     "win": {
       "target": [
         {
-          "target": "portable",
+          "target": "nsis",
           "arch": [
             "x64"
           ]
         }
       ],
-      "icon": false,
+      "icon": "assets/icon.ico",
       "signAndEditExecutable": false
+    },
+    "nsis": {
+      "installerIcon": "assets/icon.ico",
+      "uninstallerIcon": "assets/icon.ico",
+      "installerHeaderIcon": "assets/icon.ico"
     },
     "electronDownload": {
       "cache": "dist/electron-cache"
     },
     "files": [
       "src/**/*",
+      "assets/**/*",
       "package.json"
     ]
   }
