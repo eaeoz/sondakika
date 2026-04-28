@@ -35,7 +35,6 @@ function saveCLIState(state) {
 }
 
 const sources = {
-  ntv: 'https://www.ntv.com.tr/son-dakika.rss',
   cumhuriyet: 'http://www.cumhuriyet.com.tr/rss/son_dakika.xml',
   trt: 'https://www.trthaber.com/sondakika.rss',
   mynet: 'https://www.mynet.com/haber/rss/sondakika',
@@ -49,7 +48,6 @@ const sources = {
 }
 
 const sourceInfo = {
-  ntv: { name: 'NTV', isSondakika: true },
   cumhuriyet: { name: 'Cumhuriyet', isSondakika: true },
   trt: { name: 'TRT Haber', isSondakika: true },
   mynet: { name: 'Mynet', isSondakika: true },
@@ -271,6 +269,14 @@ async function main() {
   const cliState = loadCLIState()
 
   if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
+    const breakingSrc = Object.entries(sources)
+      .filter(([k, v]) => sourceInfo[k] && sourceInfo[k].isSondakika)
+      .map(([k, v]) => `  ${k.padEnd(12)} ${sourceInfo[k].name}`)
+      .join('\n')
+    const generalSrc = Object.entries(sources)
+      .filter(([k, v]) => !sourceInfo[k] || !sourceInfo[k].isSondakika)
+      .map(([k, v]) => `  ${k.padEnd(12)} ${sourceInfo[k] ? sourceInfo[k].name : k}`)
+      .join('\n')
     console.log(`
 📰 Sondakika v${version} - Son dakika haberleri CLI
 
@@ -280,27 +286,17 @@ Usage:
   sondakika --help
 
 Sources (Son Dakika):
-  ntv         NTV Son Dakika
-  cumhuriyet  Cumhuriyet
-  trt         TRT Haber
-  mynet       Mynet
+${breakingSrc}
 
 Sources (Haberler):
-  sabah       Sabah
-  star        Star
-  vatan       Gazete Vatan
-  haberturk   Habertürk
-  cnnturk     CNN Türk
-  yenisafak   Yeni Şafak
-  aa          Anadolu Ajansı
+${generalSrc}
 
 Examples:
-  sondakika ntv           # NTV haberleri (varsayilan 10 adet)
-  sondakika ntv 15        # NTV 15 haber
-  sondakika trt           # TRT Haber
-  sondakika mynet 5       # Mynet 5 haber
-  sondakika sabah         # Sabah haberleri
-  sondakika haberturk 5   # Habertürk 5 haber
+   sondakika cumhuriyet    # Cumhuriyet haberleri
+   sondakika trt 15        # TRT 15 haber
+   sondakika mynet 5       # Mynet 5 haber
+   sondakika sabah         # Sabah haberleri
+   sondakika haberturk 5   # Habertürk 5 haber
 `)
     process.exit(0)
   }
@@ -439,3 +435,4 @@ main().catch(err => {
   console.error('Error:', err.message)
   process.exit(1)
 })
+

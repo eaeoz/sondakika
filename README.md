@@ -30,12 +30,6 @@ npm install -g sondakika
 ## Usage Examples
 
 ```bash
-# Show NTV news (default 10 items)
-sondakika ntv
-
-# Show 15 NTV news items
-sondakika ntv 15
-
 # Show Cumhuriyet news
 sondakika cumhuriyet
 
@@ -78,7 +72,6 @@ sondakika aa
 #### Son Dakika (Breaking News)
 | Command | Source |
 |---------|--------|
-| `ntv` | NTV (Son Dakika) |
 | `cumhuriyet` | Cumhuriyet |
 | `trt` | TRT Haber |
 | `mynet` | Mynet |
