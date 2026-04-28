@@ -1,4 +1,26 @@
-<!DOCTYPE html>
+const fs = require('fs');
+const path = require('path');
+
+// Emoji characters
+const E = {
+  newspaper: '\uD83D\uDCF0', // 📰
+  refresh: '\uD83D\uDD04',   // 🔄
+  empty: '\uD83D\uDCFD',   // 📭
+  clock: '\uD83D\uDD52',    // 🕒
+  link: '\uD83D\uDD17',     // 🔗
+  upArrow: '\u2191',
+  downArrow: '\u2193',
+  leftArrow: '\u2190',
+  rightArrow: '\u2192',
+  laquo: '\u00AB',
+  raquo: '\u00BB',
+  lsquo: '\u2039',
+  rsquo: '\u203A',
+  bullet: '\u2022',
+  check: '\u2713'
+};
+
+const html = `<!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
@@ -168,7 +190,7 @@
     }
 
     .source-item input[type="checkbox"]:checked::after {
-      content: '✓';
+      content: '${E.check}';
       color: white;
       font-size: 12px;
       font-weight: bold;
@@ -599,8 +621,6 @@
     ::-webkit-scrollbar-track { background: var(--bg-secondary); }
     ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
-
-    .hidden { display: none !important; }
   </style>
 </head>
 <body>
@@ -608,7 +628,7 @@
     <aside class="sidebar">
       <div class="sidebar-header">
         <div class="logo">
-          <div class="logo-icon">📰</div>
+          <div class="logo-icon">${E.newspaper}</div>
           <span class="logo-text">Sondakika</span>
         </div>
       </div>
@@ -667,15 +687,15 @@
             <span class="status-dot" id="statusDot"></span>
             <span id="statusText">Hazır</span>
           </div>
-          <button class="refresh-btn" id="refreshBtn">🔄 Yenile</button>
+          <button class="refresh-btn" id="refreshBtn">${E.refresh} Yenile</button>
         </div>
       </div>
 
       <div id="newsContainer">
-        <div class="loading-grid hidden" id="loadingGrid"></div>
+        <div class="loading-grid" id="loadingGrid"></div>
         <div class="news-grid hidden" id="newsGrid"></div>
         <div class="empty-state hidden" id="emptyState">
-          <div class="empty-icon">📽</div>
+          <div class="empty-icon">${E.empty}</div>
           <h2 class="empty-title">Haber Kaynağı Seçin</h2>
           <p class="empty-text">Lütfen en az bir haber kaynağı seçiniz ve yenile butonuna basınız.</p>
         </div>
@@ -686,8 +706,8 @@
   </div>
 
   <div class="keys-hint">
-    <span><kbd>↑</kbd><kbd>↓</kbd> Seç</span>
-    <span><kbd>←</kbd><kbd>→</kbd> Sayfa</span>
+    <span><kbd>${E.upArrow}</kbd><kbd>${E.downArrow}</kbd> Seç</span>
+    <span><kbd>${E.leftArrow}</kbd><kbd>${E.rightArrow}</kbd> Sayfa</span>
     <span><kbd>Enter</kbd> Görüntüle</span>
   </div>
 
@@ -706,31 +726,21 @@
     let selectedIndex = -1;
 
     async function init() {
-      try {
-        if (!window.electronAPI) {
-          document.getElementById('sourcesList').innerHTML = '<div style="color:var(--error);padding:12px;">Hata: electronAPI bulunamadı (preload.js yüklenemedi)</div>';
-          document.getElementById('newsCount').textContent = 'electronAPI hatası';
-          return;
-        }
-        sources = await window.electronAPI.getSources();
-        const state = await window.electronAPI.getState();
-        currentState = Object.assign({}, currentState, state);
+      sources = await window.electronAPI.getSources();
+      const state = await window.electronAPI.getState();
+      currentState = Object.assign({}, currentState, state);
 
-        renderSources();
-        setupEventListeners();
-        applyState();
+      renderSources();
+      setupEventListeners();
+      applyState();
 
-        if (currentState.enabledSources.length > 0) {
-          await fetchNews();
-        } else {
-          showEmptyState();
-        }
-
-        setupKeyboardNavigation();
-      } catch (err) {
-        console.error('Init error:', err);
-        document.getElementById('sourcesList').innerHTML = '<div style="color:var(--error);padding:12px;">Hata: ' + err.message + '</div>';
+      if (currentState.enabledSources.length > 0) {
+        await fetchNews();
+      } else {
+        showEmptyState();
       }
+
+      setupKeyboardNavigation();
     }
 
     function renderSources() {
@@ -944,22 +954,15 @@
       var dot = document.getElementById('statusDot');
       var text = document.getElementById('statusText');
       var btn = document.getElementById('refreshBtn');
-      var loadingGrid = document.getElementById('loadingGrid');
-      var newsGrid = document.getElementById('newsGrid');
-      var empty = document.getElementById('emptyState');
 
       if (loading) {
         dot.classList.add('loading');
         text.textContent = 'Yükleniyor...';
         btn.disabled = true;
-        loadingGrid.classList.remove('hidden');
-        newsGrid.classList.add('hidden');
-        empty.classList.add('hidden');
       } else {
         dot.classList.remove('loading');
         text.textContent = 'Hazır';
         btn.disabled = false;
-        loadingGrid.classList.add('hidden');
       }
     }
 
@@ -968,9 +971,6 @@
       var empty = document.getElementById('emptyState');
       var loading = document.getElementById('loadingGrid');
       var pag = document.getElementById('pagination');
-
-      // Always hide loading grid when renderNews is called
-      loading.classList.add('hidden');
 
       if (allNews.length === 0) {
         grid.classList.add('hidden');
@@ -981,6 +981,7 @@
       }
 
       empty.classList.add('hidden');
+      loading.classList.add('hidden');
       grid.classList.remove('hidden');
 
       var start = (currentState.currentPage - 1) * currentState.itemsPerPage;
@@ -988,13 +989,13 @@
       var pageNews = allNews.slice(start, end);
       var totalPages = Math.ceil(allNews.length / currentState.itemsPerPage);
 
-      document.getElementById('newsCount').textContent = allNews.length + ' haber • Sayfa ' + currentState.currentPage + '/' + totalPages;
+      document.getElementById('newsCount').textContent = allNews.length + ' haber \\u2022 Sayfa ' + currentState.currentPage + '/' + totalPages;
 
       var html = '';
       pageNews.forEach(function(news, index) {
         var date = formatDate(news.pubDate || news.isoDate);
         var summary = news.summary || news.contentSnippet || news.description || '';
-        summary = summary.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim();
+        summary = summary.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').replace(/\\s+/g, ' ').trim();
         var newsIndex = start + index;
 
         var breakingClass = news.isSondakika ? ' breaking' : '';
@@ -1006,13 +1007,13 @@
             '<div class="news-source">' +
               '<span class="source-tag' + breakingClass + '">' + news.sourceName + '</span>' +
             '</div>' +
-            '<span class="news-date-badge">🕒 ' + date + '</span>' +
+            '<span class="news-date-badge">${E.clock} ' + date + '</span>' +
           '</div>' +
           '<h2 class="news-title">' + escapedTitle + '</h2>' +
           '<p class="news-summary">' + escapedSummary + '</p>' +
           '<div class="news-card-footer">' +
             '<span class="read-more" onclick="event.stopPropagation(); window.openArticleView(' + newsIndex + ')">Görüntüle</span>' +
-            '<span class="external-link-btn" onclick="event.stopPropagation(); window.electronAPI.openExternal(\"' + news.link + '\"")">🔗 Tarayıcıda aç</span>' +
+            '<span class="external-link-btn" onclick="event.stopPropagation(); window.electronAPI.openExternal(\\'' + news.link + '\\')">${E.link} Tarayıcıda aç</span>' +
           '</div>' +
         '</article>';
       });
@@ -1041,8 +1042,8 @@
       pag.classList.remove('hidden');
       var html = '';
 
-      html += '<button class="page-btn" onclick="window.changePage(1)"' + (currentState.currentPage === 1 ? ' disabled' : '') + '>«</button>';
-      html += '<button class="page-btn" onclick="window.changePage(' + (currentState.currentPage - 1) + ')"' + (currentState.currentPage === 1 ? ' disabled' : '') + '>‹</button>';
+      html += '<button class="page-btn" onclick="window.changePage(1)"' + (currentState.currentPage === 1 ? ' disabled' : '') + '>${E.laquo}</button>';
+      html += '<button class="page-btn" onclick="window.changePage(' + (currentState.currentPage - 1) + ')"' + (currentState.currentPage === 1 ? ' disabled' : '') + '>${E.lsquo}</button>';
 
       for (var i = 1; i <= totalPages; i++) {
         if (i === 1 || i === totalPages || (i >= currentState.currentPage - 1 && i <= currentState.currentPage + 1)) {
@@ -1052,8 +1053,8 @@
         }
       }
 
-      html += '<button class="page-btn" onclick="window.changePage(' + (currentState.currentPage + 1) + ')"' + (currentState.currentPage === totalPages ? ' disabled' : '') + '>›</button>';
-      html += '<button class="page-btn" onclick="window.changePage(' + totalPages + ')"' + (currentState.currentPage === totalPages ? ' disabled' : '') + '>»</button>';
+      html += '<button class="page-btn" onclick="window.changePage(' + (currentState.currentPage + 1) + ')"' + (currentState.currentPage === totalPages ? ' disabled' : '') + '>${E.rsquo}</button>';
+      html += '<button class="page-btn" onclick="window.changePage(' + totalPages + ')"' + (currentState.currentPage === totalPages ? ' disabled' : '') + '>${E.raquo}</button>';
 
       pag.innerHTML = html;
     }
@@ -1126,8 +1127,11 @@
       }
     });
 
-    // Don't call showLoading() here - it will be called by setLoading(true) when fetchNews runs
+    showLoading();
     init();
   </script>
 </body>
-</html>
+</html>`;
+
+fs.writeFileSync(path.join(__dirname, 'src', 'renderer', 'index.html'), html, 'utf8');
+console.log('index.html built successfully with proper UTF-8 encoding');

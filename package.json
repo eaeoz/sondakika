@@ -12,6 +12,7 @@
     "build:dir": "electron-builder --win --x64 --dir"
   },
   "dependencies": {
+    "blessed": "^0.1.81",
     "rss-parser": "^3.13.0"
   },
   "devDependencies": {
@@ -28,7 +29,9 @@
       "target": [
         {
           "target": "portable",
-          "arch": ["x64"]
+          "arch": [
+            "x64"
+          ]
         }
       ],
       "icon": false,

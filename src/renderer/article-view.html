@@ -319,13 +319,13 @@
     <button class="nav-btn" id="prevBtn">← Önceki</button>
 
     <div class="center-group">
-      <button class="return-btn" id="returnBtn">↩ Modala Dön</button>
+      <button class="return-btn" id="returnBtn">↩ Listeye Dön</button>
       <button class="open-browser-btn" id="browserBtn">🌐 Tarayıcıda Aç</button>
-      <div class="keys-hint">
-        <kbd>↑</kbd><kbd>↓</kbd> Kaydır &nbsp;
-        <kbd>←</kbd><kbd>→</kbd> Haber &nbsp;
-        <kbd>Enter</kbd> Geri dön
-      </div>
+        <div class="keys-hint">
+          <kbd>↑</kbd><kbd>↓</kbd> Kaydır &nbsp;
+          <kbd>←</kbd><kbd>→</kbd> Haber &nbsp;
+          <kbd>Enter</kbd> Listeye dön
+        </div>
     </div>
 
     <button class="nav-btn" id="nextBtn">Sonraki →</button>
@@ -415,8 +415,8 @@
       }
     }
 
-    function returnToModal() {
-      window.articleAPI.closeView(currentIdx);
+    function returnToMain() {
+          window.electronAPI.close(currentIdx);
     }
 
     // ── Keyboard ────────────────────────────────────────────────────
@@ -460,7 +460,7 @@
         case 'Enter':
         case 'Escape':
           e.preventDefault();
-          returnToModal();
+          returnToMain();
           break;
       }
     });
@@ -468,14 +468,14 @@
     // ── Button wiring ───────────────────────────────────────────────
     document.getElementById('prevBtn').addEventListener('click', () => navigate(-1));
     document.getElementById('nextBtn').addEventListener('click', () => navigate(1));
-    document.getElementById('returnBtn').addEventListener('click', returnToModal);
+        document.getElementById('returnBtn').addEventListener('click', returnToMain);
     document.getElementById('browserBtn').addEventListener('click', () => {
-      if (currentUrl) window.articleAPI.openExternal(currentUrl);
+          if (currentUrl) window.electronAPI.openExternal(currentUrl);
     });
 
     // ── Bootstrap ───────────────────────────────────────────────────
     async function init() {
-      const data = await window.articleAPI.getArticleData();
+        const data = await window.electronAPI.getData();
       newsItems  = data.newsItems || [];
       const startIdx = data.currentIndex || 0;
       renderArticle(startIdx);
