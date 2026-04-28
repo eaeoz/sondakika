@@ -1,4 +1,4 @@
-# Sondakika (Türkçe)
+# Sondakika
 
 **Windows için Modern Electron Tabanlı RSS Haber Okuyucu + Eski CLI Aracı**  
 *Türkçe haberleri gerçek zamanlı toplayan yerel masaüstü uygulaması, artı orijinal terminal tabanlı CLI işlevselliği*
