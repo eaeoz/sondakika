@@ -1,0 +1,25 @@
+{
+  "name": "sondakika",
+  "version": "2.0.2",
+  "description": "Full-featured Turkish news CLI with interactive UI. Identical news sources, parsing, and image extraction as the Electron desktop app. 10 major Turkish news sources with blessed terminal interface.",
+  "bin": {
+    "sondakika": "./cli.js"
+  },
+  "files": ["cli.js"],
+  "keywords": [
+    "news", "rss", "turkish", "cli", "terminal", "haber", 
+    "son dakika", "electron", "desktop", "trt", "cumhuriyet",
+    "mynet", "sabah", "haberturk", "cnnturk", "yenisafak",
+    "interactive", "blessed", "terminal-ui", "pagination"
+  ],
+  "author": {
+    "name": "Sedat Ergoz",
+    "email": "sedatergoz@gmail.com",
+    "url": "https://github.com/eaeoz"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "blessed": "^0.1.81",
+    "rss-parser": "^3.13.0"
+  }
+}
