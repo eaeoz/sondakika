@@ -38,7 +38,7 @@ function saveCLIState(state) {
 const sources = {
   cumhuriyet: { 
     name: 'Cumhuriyet', 
-    url: 'http://www.cumhuriyet.com.tr/rss/son_dakika.xml', 
+    url: 'https://www.cumhuriyet.com.tr/rss/son_dakika.xml', 
     isSondakika: true 
   },
   trt: { 
@@ -122,11 +122,20 @@ async function fetchNews(sourceKey, count) {
   }
 
   try {
+    console.error(`Fetching from: ${source.url}`); // Debug output to stderr
     const feed = await parser.parseURL(source.url);
+    console.error(`Fetched ${feed.items.length} items`); // Debug output
+    
+    if (!feed.items || feed.items.length === 0) {
+      console.error(`No items found in feed from ${source.name}`);
+      process.exit(1);
+    }
+    
     return feed.items.slice(0, count);
   } catch (err) {
     console.error('Error fetching news:', err.message);
-    console.log(`URL: ${source.url}`);
+    console.error(`URL: ${source.url}`);
+    console.error(`Source: ${source.name}`);
     process.exit(1);
   }
 }
