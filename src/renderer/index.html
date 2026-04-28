@@ -638,11 +638,19 @@
             </select>
           </div>
           <div class="option-item">
-            <span class="option-label">Yazı Büyüklüğü</span>
+            <span class="option-label">Başlık Yazısı</span>
             <div class="font-size-controls">
-              <button class="font-btn" id="fontDecrease" onclick="changeFontSize(-2)">A-</button>
-              <span class="font-size-value" id="fontSizeValue">16px</span>
-              <button class="font-btn" id="fontIncrease" onclick="changeFontSize(2)">A+</button>
+              <button class="font-btn" id="titleFontDec" onclick="changeTitleFontSize(-1)">A-</button>
+              <span class="font-size-value" id="titleFontSizeValue">17px</span>
+              <button class="font-btn" id="titleFontInc" onclick="changeTitleFontSize(1)">A+</button>
+            </div>
+          </div>
+          <div class="option-item">
+            <span class="option-label">İçerik Yazısı</span>
+            <div class="font-size-controls">
+              <button class="font-btn" id="contentFontDec" onclick="changeContentFontSize(-1)">A-</button>
+              <span class="font-size-value" id="contentFontSizeValue">14px</span>
+              <button class="font-btn" id="contentFontInc" onclick="changeContentFontSize(1)">A+</button>
             </div>
           </div>
           <div class="option-item">
@@ -879,11 +887,15 @@
     }
 
     function applyState() {
-      document.getElementById('sortOrder').value = currentState.sortOrder;
-      document.getElementById('itemsPerPage').value = currentState.itemsPerPage;
-      document.getElementById('fontSizeValue').textContent = currentState.fontSize + 'px';
-      document.getElementById('themeSelect').value = currentState.theme || 'dark';
+      var el;
+      el = document.getElementById('sortOrder'); if (el) el.value = currentState.sortOrder;
+      el = document.getElementById('itemsPerPage'); if (el) el.value = currentState.itemsPerPage;
+      el = document.getElementById('titleFontSizeValue'); if (el) el.textContent = (currentState.titleFontSize || 17) + 'px';
+      el = document.getElementById('contentFontSizeValue'); if (el) el.textContent = (currentState.contentFontSize || 14) + 'px';
+      el = document.getElementById('themeSelect'); if (el) el.value = currentState.theme || 'dark';
       applyFontSize(currentState.fontSize);
+      applyTitleFontSize(currentState.titleFontSize || 17);
+      applyContentFontSize(currentState.contentFontSize || 14);
       applyTheme(currentState.theme || 'dark');
     }
 
@@ -892,7 +904,27 @@
     }
 
     function applyFontSize(size) {
-      document.body.style.fontSize = size + 'px';
+      if (document.body) document.body.style.fontSize = size + 'px';
+    }
+
+    function applyTitleFontSize(size) {
+      var els = document.querySelectorAll('.news-title');
+      for (var i = 0; i < els.length; i++) {
+        els[i].style.fontSize = size + 'px';
+      }
+    }
+
+    function applyContentFontSize(size) {
+      var els = document.querySelectorAll('.news-summary');
+      for (var i = 0; i < els.length; i++) {
+        els[i].style.fontSize = size + 'px';
+      }
+    }
+
+    // Apply saved font sizes to new items when rendering
+    function applyFontSizesToNews() {
+      applyTitleFontSize(currentState.titleFontSize || 17);
+      applyContentFontSize(currentState.contentFontSize || 14);
     }
 
     function applyTheme(theme) {
@@ -908,13 +940,63 @@
       await window.electronAPI.setTheme(theme);
     }
 
-    async function changeFontSize(delta) {
-      var newSize = (currentState.fontSize || 16) + delta;
-      newSize = Math.max(12, Math.min(28, newSize));
-      currentState.fontSize = newSize;
-      document.getElementById('fontSizeValue').textContent = newSize + 'px';
-      applyFontSize(newSize);
-      await window.electronAPI.setFontSize(newSize);
+    async function changeTitleFontSize(delta) {
+      var newSize = (currentState.titleFontSize || 17) + delta;
+      newSize = Math.max(12, Math.min(32, newSize));
+      currentState.titleFontSize = newSize;
+      var el = document.getElementById('titleFontSizeValue');
+      if (el) el.textContent = newSize + 'px';
+      applyTitleFontSize(newSize);
+      await window.electronAPI.setTitleFontSize(newSize);
+    }
+
+    async function changeContentFontSize(delta) {
+      var newSize = (currentState.contentFontSize || 14) + delta;
+      newSize = Math.max(10, Math.min(28, newSize));
+      currentState.contentFontSize = newSize;
+      var el = document.getElementById('contentFontSizeValue');
+      if (el) el.textContent = newSize + 'px';
+      applyContentFontSize(newSize);
+      await window.electronAPI.setContentFontSize(newSize);
+    }
+
+    // Apply saved font sizes to new items when rendering
+    function applyFontSizesToNews() {
+      applyTitleFontSize(currentState.titleFontSize || 17);
+      applyContentFontSize(currentState.contentFontSize || 14);
+    }
+
+    function applyTheme(theme) {
+      document.body.classList.remove('theme-light');
+      if (theme === 'light') {
+        document.body.classList.add('theme-light');
+      }
+    }
+
+    async function changeTheme(theme) {
+      currentState.theme = theme;
+      applyTheme(theme);
+      await window.electronAPI.setTheme(theme);
+    }
+
+    async function changeTitleFontSize(delta) {
+      var newSize = (currentState.titleFontSize || 17) + delta;
+      newSize = Math.max(12, Math.min(32, newSize));
+      currentState.titleFontSize = newSize;
+      var el = document.getElementById('titleFontSizeValue');
+      if (el) el.textContent = newSize + 'px';
+      applyTitleFontSize(newSize);
+      await window.electronAPI.setTitleFontSize(newSize);
+    }
+
+    async function changeContentFontSize(delta) {
+      var newSize = (currentState.contentFontSize || 14) + delta;
+      newSize = Math.max(10, Math.min(28, newSize));
+      currentState.contentFontSize = newSize;
+      var el = document.getElementById('contentFontSizeValue');
+      if (el) el.textContent = newSize + 'px';
+      applyContentFontSize(newSize);
+      await window.electronAPI.setContentFontSize(newSize);
     }
 
     async function fetchNews() {
@@ -1030,6 +1112,9 @@
       if (selectedIndex >= 0) {
         updateSelectedCard();
       }
+
+      // Apply saved font sizes to newly rendered news items
+      applyFontSizesToNews();
     }
 
     function renderPagination(totalPages) {

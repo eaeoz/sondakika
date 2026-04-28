@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin:0; padding:0; box-sizing: border-box; }
 
     :root {
       --bg-primary:   #0f0f1a;
@@ -42,11 +42,12 @@
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 14px 24px;
+      padding: 10px 24px;
       background: var(--bg-secondary);
       border-bottom: 1px solid var(--border);
       flex-shrink: 0;
       -webkit-app-region: drag;
+      flex-wrap: wrap;
     }
 
     .topbar > * { -webkit-app-region: no-drag; }
@@ -97,6 +98,68 @@
       white-space: nowrap;
       flex-shrink: 0;
       border: 1px solid var(--border);
+    }
+
+    /* ── Font Control Bar ── */
+    .font-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 8px 24px;
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .font-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .font-group-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .font-btn {
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-primary);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    .font-btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    .font-value {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--accent-sec);
+      min-width: 36px;
+      text-align: center;
+    }
+
+    .font-separator {
+      width: 1px;
+      height: 20px;
+      background: var(--border);
     }
 
     /* ── Scrollable content area ── */
@@ -292,15 +355,32 @@
     ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
   </style>
 </head>
-<body>
+  <body>
 
-  <!-- Top bar -->
-  <div class="topbar">
-    <span class="topbar-source" id="tbSource"></span>
-    <span class="topbar-title"  id="tbTitle"></span>
-    <span class="topbar-date"   id="tbDate"></span>
-    <span class="topbar-counter" id="tbCounter"></span>
-  </div>
+    <!-- Top bar -->
+    <div class="topbar">
+      <span class="topbar-source" id="tbSource"></span>
+      <span class="topbar-title"  id="tbTitle"></span>
+      <span class="topbar-date"   id="tbDate"></span>
+      <span class="topbar-counter" id="tbCounter"></span>
+    </div>
+
+    <!-- Font Control Bar -->
+    <div class="font-bar">
+      <div class="font-group">
+        <span class="font-group-label">Başlık</span>
+        <button class="font-btn" onclick="changeTitleFont(-1)">A-</button>
+        <span class="font-value" id="titleFontVal">28px</span>
+        <button class="font-btn" onclick="changeTitleFont(1)">A+</button>
+      </div>
+      <div class="font-separator"></div>
+      <div class="font-group">
+        <span class="font-group-label">İçerik</span>
+        <button class="font-btn" onclick="changeContentFont(-1)">A-</button>
+        <span class="font-value" id="contentFontVal">17px</span>
+        <button class="font-btn" onclick="changeContentFont(1)">A+</button>
+      </div>
+    </div>
 
   <!-- Scrollable article -->
   <div class="article-scroll" id="articleScroll">
@@ -335,8 +415,13 @@
     let newsItems   = [];
     let currentIdx  = 0;
     let currentUrl  = '';
+    let titleFontSize = 28;
+    let contentFontSize = 17;
 
-    // ── Render helpers ──────────────────────────────────────────────
+    function el(id) {
+      return document.getElementById(id);
+    }
+
     function formatDate(dateStr) {
       if (!dateStr) return '';
       const d = new Date(dateStr);
@@ -353,61 +438,73 @@
       currentIdx = idx;
       currentUrl = news.link || '';
 
-      // Slide animation on the inner container
-      const inner = document.getElementById('articleInner');
-      inner.classList.remove('slide-right', 'slide-left');
-      void inner.offsetWidth; // reflow
-      if (slideDir === 'right') inner.classList.add('slide-right');
-      else if (slideDir === 'left') inner.classList.add('slide-left');
-
-      // Reset scroll to top
-      document.getElementById('articleScroll').scrollTop = 0;
-
-      // Top-bar
-      const tbSource = document.getElementById('tbSource');
-      tbSource.textContent = news.sourceName || '';
-      tbSource.className   = 'topbar-source' + (news.isSondakika ? ' breaking' : '');
-      document.getElementById('tbTitle').textContent   = news.title || '';
-      document.getElementById('tbDate').textContent    = formatDate(news.pubDate || news.isoDate);
-      document.getElementById('tbCounter').textContent = `${idx + 1} / ${newsItems.length}`;
-
-      // Headline
-      document.getElementById('artHeadline').textContent = news.title || '';
-
-      // Meta row
-      const metaRow = document.getElementById('artMeta');
-      metaRow.innerHTML = `
-        <span class="tag tag-source">${news.sourceName || ''}</span>
-        ${news.isSondakika ? '<span class="tag tag-breaking">SON DAKİKA</span>' : ''}
-        <span style="font-size:12px;color:var(--accent-sec);background:rgba(99,102,241,0.15);padding:5px 12px;border-radius:6px;font-weight:600;">
-          🕒 ${formatDate(news.pubDate || news.isoDate)}
-        </span>`;
-
-      // Image
-      const img = document.getElementById('artImage');
-      if (news.imageUrl) {
-        img.src   = news.imageUrl;
-        img.style.display = 'block';
-        img.onerror = () => { img.style.display = 'none'; };
-      } else {
-        img.style.display = 'none';
+      const inner = el('articleInner');
+      if (inner) {
+        inner.classList.remove('slide-right', 'slide-left');
+        void inner.offsetWidth;
+        if (slideDir === 'right') inner.classList.add('slide-right');
+        else if (slideDir === 'left') inner.classList.add('slide-left');
       }
 
-      // Body
-      let content = news.fullContent || news.content || news.summary
-                    || news.contentSnippet || news.description || news.title || 'İçerik bulunmuyor.';
+      const scroll = el('articleScroll');
+      if (scroll) scroll.scrollTop = 0;
+
+      const tbSource = el('tbSource');
+      if (tbSource) {
+        tbSource.textContent = news.sourceName || '';
+        tbSource.className = 'topbar-source' + (news.isSondakika ? ' breaking' : '');
+      }
+      const tbTitle = el('tbTitle');
+      if (tbTitle) tbTitle.textContent = news.title || '';
+      const tbDate = el('tbDate');
+      if (tbDate) tbDate.textContent = formatDate(news.pubDate || news.isoDate);
+      const tbCounter = el('tbCounter');
+      if (tbCounter) tbCounter.textContent = (idx + 1) + ' / ' + newsItems.length;
+
+      const headline = el('artHeadline');
+      if (headline) {
+        headline.textContent = news.title || '';
+        headline.style.fontSize = titleFontSize + 'px';
+      }
+
+      const metaRow = el('artMeta');
+      if (metaRow) {
+        metaRow.innerHTML =
+          '<span class="tag tag-source">' + (news.sourceName || '') + '</span>' +
+          (news.isSondakika ? '<span class="tag tag-breaking">SON DAKİKA</span>' : '') +
+          '<span style="font-size:12px;color:var(--accent-sec);background:rgba(99,102,241,0.15);padding:5px 12px;border-radius:6px;font-weight:600;">🕒 ' +
+          formatDate(news.pubDate || news.isoDate) + '</span>';
+      }
+
+      const img = el('artImage');
+      if (img) {
+        if (news.imageUrl) {
+          img.src = news.imageUrl;
+          img.style.display = 'block';
+          img.onerror = () => { img.style.display = 'none'; };
+        } else {
+          img.style.display = 'none';
+        }
+      }
+
+      let content = news.fullContent || news.content || news.summary ||
+                    news.contentSnippet || news.description || news.title || 'İçerik bulunmuyor.';
       content = content.replace(/<img[^>]*>/gi, '')
                        .replace(/<a[^>]*>/gi, '')
                        .replace(/<\/a>/gi, '')
                        .trim();
-      document.getElementById('artBody').textContent = content;
+      const body = el('artBody');
+      if (body) {
+        body.textContent = content;
+        body.style.fontSize = contentFontSize + 'px';
+      }
 
-      // Button states
-      document.getElementById('prevBtn').disabled = idx === 0;
-      document.getElementById('nextBtn').disabled = idx === newsItems.length - 1;
+      const prevBtn = el('prevBtn');
+      if (prevBtn) prevBtn.disabled = idx === 0;
+      const nextBtn = el('nextBtn');
+      if (nextBtn) nextBtn.disabled = idx === newsItems.length - 1;
     }
 
-    // ── Navigation ──────────────────────────────────────────────────
     function navigate(direction) {
       const next = currentIdx + direction;
       if (next >= 0 && next < newsItems.length) {
@@ -416,12 +513,31 @@
     }
 
     function returnToMain() {
-          window.electronAPI.close(currentIdx);
+      window.electronAPI.close(currentIdx);
     }
 
-    // ── Keyboard ────────────────────────────────────────────────────
+    function changeTitleFont(delta) {
+      titleFontSize = Math.max(16, Math.min(48, titleFontSize + delta));
+      const tf = el('titleFontVal');
+      if (tf) tf.textContent = titleFontSize + 'px';
+      const headline = el('artHeadline');
+      if (headline) headline.style.fontSize = titleFontSize + 'px';
+      window.electronAPI.setTitleFontSize(titleFontSize);
+    }
+
+    function changeContentFont(delta) {
+      contentFontSize = Math.max(12, Math.min(32, contentFontSize + delta));
+      const cf = el('contentFontVal');
+      if (cf) cf.textContent = contentFontSize + 'px';
+      const body = el('artBody');
+      if (body) body.style.fontSize = contentFontSize + 'px';
+      window.electronAPI.setContentFontSize(contentFontSize);
+    }
+
+    // Keyboard
     document.addEventListener('keydown', (e) => {
-      const scroll = document.getElementById('articleScroll');
+      const scroll = el('articleScroll');
+      if (!scroll) return;
 
       switch (e.key) {
         case 'ArrowDown':
@@ -465,27 +581,45 @@
       }
     });
 
-    // ── Button wiring ───────────────────────────────────────────────
-    document.getElementById('prevBtn').addEventListener('click', () => navigate(-1));
-    document.getElementById('nextBtn').addEventListener('click', () => navigate(1));
-        document.getElementById('returnBtn').addEventListener('click', returnToMain);
-    document.getElementById('browserBtn').addEventListener('click', () => {
-          if (currentUrl) window.electronAPI.openExternal(currentUrl);
+    // Button wiring
+    const prevBtn = el('prevBtn');
+    if (prevBtn) prevBtn.addEventListener('click', () => navigate(-1));
+    const nextBtn = el('nextBtn');
+    if (nextBtn) nextBtn.addEventListener('click', () => navigate(1));
+    const returnBtn = el('returnBtn');
+    if (returnBtn) returnBtn.addEventListener('click', returnToMain);
+    const browserBtn = el('browserBtn');
+    if (browserBtn) browserBtn.addEventListener('click', () => {
+      if (currentUrl) window.electronAPI.openExternal(currentUrl);
     });
 
-    // ── Bootstrap ───────────────────────────────────────────────────
+    // Bootstrap
     async function init() {
       const data = await window.electronAPI.getData();
       newsItems  = data.newsItems || [];
       const startIdx = data.currentIndex || 0;
-      // Apply font size from main app
       if (data.fontSize) {
         document.body.style.fontSize = data.fontSize + 'px';
+      }
+      if (data.titleFontSize) {
+        titleFontSize = data.titleFontSize;
+        const tf = el('titleFontVal');
+        if (tf) tf.textContent = titleFontSize + 'px';
+      }
+      if (data.contentFontSize) {
+        contentFontSize = data.contentFontSize;
+        const cf = el('contentFontVal');
+        if (cf) cf.textContent = contentFontSize + 'px';
       }
       renderArticle(startIdx);
     }
 
-    init();
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
   </script>
 </body>
 </html>
+

@@ -40,6 +40,8 @@ const defaultState = {
   currentPage: 1,
   windowBounds: null,
   fontSize: 16,
+  titleFontSize: 17,
+  contentFontSize: 14,
   theme: 'dark'
 }
 
@@ -255,6 +257,20 @@ ipcMain.handle('set-font-size', (event, fontSize) => {
   return true
 })
 
+ipcMain.handle('set-title-font-size', (event, size) => {
+  const state = loadState()
+  state.titleFontSize = size
+  saveState(state)
+  return true
+})
+
+ipcMain.handle('set-content-font-size', (event, size) => {
+  const state = loadState()
+  state.contentFontSize = size
+  saveState(state)
+  return true
+})
+
 ipcMain.handle('set-theme', (event, theme) => {
   const state = loadState()
   state.theme = theme
@@ -275,15 +291,27 @@ ipcMain.handle('open-external', async (event, url) => {
 
 // Article View Window
 ipcMain.handle('open-article-view', async (event, newsItems, currentIndex) => {
+  const state = loadState()
   if (articleWindow && !articleWindow.isDestroyed()) {
-    articleWindowData = { newsItems, currentIndex, fontSize: loadState().fontSize || 16 }
+    articleWindowData = {
+      newsItems,
+      currentIndex,
+      fontSize: state.fontSize || 16,
+      titleFontSize: state.titleFontSize || 17,
+      contentFontSize: state.contentFontSize || 14
+    }
     articleWindow.focus()
     articleWindow.webContents.send('article-view-navigate', articleWindowData)
     return true
   }
 
-  articleWindowData = { newsItems, currentIndex, fontSize: loadState().fontSize || 16 }
-  const state = loadState()
+  articleWindowData = {
+    newsItems,
+    currentIndex,
+    fontSize: state.fontSize || 16,
+    titleFontSize: state.titleFontSize || 17,
+    contentFontSize: state.contentFontSize || 14
+  }
   const mainBounds = mainWindow ? mainWindow.getBounds() : { width: 1200, height: 800, x: 100, y: 50 }
 
   articleWindow = new BrowserWindow({
@@ -291,8 +319,8 @@ ipcMain.handle('open-article-view', async (event, newsItems, currentIndex) => {
     height: mainBounds.height,
     x: mainBounds.x,
     y: mainBounds.y,
-    minWidth: 700,
-    minHeight: 500,
+    minWidth:700,
+    minHeight:500,
     parent: mainWindow,
     webPreferences: {
       preload: path.join(__dirname, 'article-preload.js'),

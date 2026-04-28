@@ -6,5 +6,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.on('article-view-navigate', (event, data) => callback(data))
   },
   close: (currentIndex) => ipcRenderer.invoke('article-view-close', currentIndex),
-  openExternal: (url) => ipcRenderer.invoke('open-external', url)
+  openExternal: (url) => ipcRenderer.invoke('open-external', url),
+  setTitleFontSize: (size) => ipcRenderer.invoke('set-title-font-size', size),
+  setContentFontSize: (size) => ipcRenderer.invoke('set-content-font-size', size)
 })

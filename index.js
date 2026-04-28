@@ -420,14 +420,9 @@ Examples:
     }
   })
 
-  // 'q' should NOT quit - remove default blessed quit handler
+  // Use Escape, Q, or Ctrl+C to quit
   screen.unkey(['q', 'C-c'])
-  screen.key(['q'], () => {
-    // Do nothing - 'q' should not quit
-  })
-
-  // Use Escape or Ctrl+C to quit
-  screen.key(['escape', 'C-c'], () => {
+  screen.key(['escape', 'q', 'Q', 'C-c'], () => {
     process.exit(0)
   })
 
