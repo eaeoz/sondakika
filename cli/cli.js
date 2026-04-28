@@ -122,9 +122,7 @@ async function fetchNews(sourceKey, count) {
   }
 
   try {
-    console.error(`Fetching from: ${source.url}`); // Debug output to stderr
     const feed = await parser.parseURL(source.url);
-    console.error(`Fetched ${feed.items.length} items`); // Debug output
     
     if (!feed.items || feed.items.length === 0) {
       console.error(`No items found in feed from ${source.name}`);
@@ -135,7 +133,6 @@ async function fetchNews(sourceKey, count) {
   } catch (err) {
     console.error('Error fetching news:', err.message);
     console.error(`URL: ${source.url}`);
-    console.error(`Source: ${source.name}`);
     process.exit(1);
   }
 }
