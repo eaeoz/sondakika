@@ -1,206 +1,7 @@
-# Sondakika
-**Modern Electron-Based RSS News Reader for Windows**  
-*Native desktop application for seamless Turkish news reading with real-time RSS feed aggregation*
-
-[![Version](https://img.shields.io/badge/version-2.0.0-blue)](https://github.com/eaeoz/sondakika/releases)  
-[![License](https://img.shields.io/badge/license-ISC-green)](LICENSE)  
-[![Windows Support](https://img.shields.io/badge/Windows-10+-lightgrey)](https://www.microsoft.com/windows)  
-[![Download](https://img.shields.io/badge/Download-Windows%20Installer-blue?style=for-the-badge)](https://github.com/eaeoz/sondakika/releases/download/2.0.0/Sondakika.Setup.2.0.0.exe)
-
----
-
-## 📋 Table of Contents
-1. [Overview](#-overview)
-2. [🪟 Windows Desktop Application](#-windows-desktop-application)
-   - [What is Sondakika?](#what-is-sondakika)
-   - [How It Works](#how-it-works)
-   - [System Requirements](#system-requirements)
-   - [📥 Download](#-download)
-   - [Installation](#installation)
-   - [Getting Started](#getting-started)
-   - [Key Features](#key-features)
-3. [⌨️ Keyboard Shortcuts](#️-keyboard-shortcuts)
-4. [🛠️ Building from Source](#️-building-from-source)
-5. [📦 What We Built in v2.0.0](#-what-we-built-in-v200)
-6. [🤝 Contributing](#-contributing)
-7. [📄 License](#-license)
-
----
-
-## 📖 Overview
-Sondakika is a native Windows desktop application built with Electron that aggregates news from major Turkish news sources. It features a modern, responsive UI with dark/light themes, customizable font sizes, and an in-app article reader.
-
-**Note:** This v2.0.0 release is a complete migration from the original CLI-only tool to a full-featured desktop GUI application.
-
----
-
-## 🪟 Windows Desktop Application
-
-### What is Sondakika?
-A native Windows application that fetches and displays real-time news from 9 major Turkish news sources (Cumhuriyet, TRT Haber, Mynet, Sabah, Star, Gazete Vatan, Habertürk, CNN Türk, Yeni Şafak, Anadolu Ajansı) in a modern, easy-to-read interface.
-
-### How It Works
-1. The app uses `rss-parser` to fetch RSS feeds from configured Turkish news sources
-2. News articles are displayed in a card-based layout with source badges and timestamps
-3. Click any article to open it in the in-app reader with full content view
-4. User preferences (enabled sources, theme, font sizes, window position) are saved locally
-5. Navigate between articles using keyboard shortcuts or on-screen buttons
-6. Open any article in your default browser with one click
-
-### System Requirements
-- Windows 10 (version 1809 or later) / Windows 11
-- 64-bit (x64) processor
-- 200MB free disk space
-- Internet connection for fetching news
-
-### 📥 Download
-
-Download the latest Windows installer directly:
-
-[![Download Sondakika 2.0.0](https://img.shields.io/badge/⬇️%20Download-Windows%20Installer%20(64-bit)-blue?style=for-the-badge)](https://github.com/eaeoz/sondakika/releases/download/2.0.0/Sondakika.Setup.2.0.0.exe)
-
-**Direct Link:**  
-`https://github.com/eaeoz/sondakika/releases/download/2.0.0/Sondakika.Setup.2.0.0.exe`
-
-Or visit the [GitHub Releases page](https://github.com/eaeoz/sondakika/releases) for all versions.
-
-### Installation
-1. Download `Sondakika.Setup.2.0.0.exe` using the link above
-2. Run the installer and follow the on-screen prompts
-3. The app will launch automatically after installation
-4. A shortcut will be added to your Start Menu and Desktop
-
-### Getting Started
-1. **First Launch**: The app opens with default news sources enabled (Cumhuriyet, TRT Haber, Mynet, Habertürk, CNN Türk)
-2. **Select Sources**: Use the sidebar checkboxes to enable/disable news sources
-3. **Fetch News**: Click the "🔄 Yenile" (Refresh) button to fetch latest headlines
-4. **Read Articles**: Click any news card to open the full article in the in-app reader
-5. **Customize**: Use the sidebar options to change theme, font sizes, sort order, and items per page
-
-### Key Features
-- ✅ **9 Turkish News Sources**: Cumhuriyet, TRT Haber, Mynet, Sabah, Star, Gazete Vatan, Habertürk, CNN Türk, Yeni Şafak, Anadolu Ajansı
-- ✅ **Modern UI**: Clean, responsive design with card-based news layout
-- ✅ **Dark/Light Theme**: Toggle between dark (default) and light themes
-- ✅ **In-App Article Reader**: Read full articles without opening a browser
-- ✅ **Article Navigation**: Navigate between articles in the reader with animation transitions
-- ✅ **Adjustable Font Sizes**: Separate controls for title (12-32px) and content (10-28px) fonts
-- ✅ **Keyboard Navigation**: Full keyboard support for navigation and controls
-- ✅ **Source Filtering**: Enable/disable individual news sources
-- ✅ **Sorting Options**: Sort by newest or oldest first
-- ✅ **Pagination**: Control how many articles display per page (5, 10, 15, 20)
-- ✅ **Image Extraction**: Automatically extracts and displays article images from RSS feeds
-- ✅ **State Persistence**: Remembers your settings, window position, and enabled sources
-- ✅ **External Link Support**: Open articles in your default browser
-- ✅ **Turkish Language UI**: Fully localized interface
-- ✅ **Custom App Icon**: Professional branding with multi-size icon
-
----
-
-## ⌨️ Keyboard Shortcuts
-
-### Main Window
-| Shortcut | Action |
-|----------|--------|
-| `↑` `↓` | Select news article |
-| `←` `→` | Navigate between pages |
-| `Enter` | Open selected article in reader |
-| `1` `2` | Decrease/Increase title font size |
-| `3` `4` | Decrease/Increase content font size |
-| `` ` `` | Open selected article in browser |
-| `F5` / Click Refresh | Fetch latest news |
-
-### Article Reader
-| Shortcut | Action |
-|----------|--------|
-| `↑` `↓` `Space` | Scroll article content |
-| `PageUp` `PageDown` | Scroll by page |
-| `Home` `End` | Scroll to top/bottom |
-| `←` `→` | Previous/Next article |
-| `Enter` `Escape` | Return to news list |
-| `1` `2` | Decrease/Increase title font size |
-| `3` `4` | Decrease/Increase content font size |
-| `` ` `` | Open article in browser |
-
----
-
-## 🛠️ Building from Source
-
-```bash
-# Clone the repository
-git clone https://github.com/eaeoz/sondakika.git
-cd sondakika
-
-# Install dependencies
-npm install
-
-# Run in development mode (Electron GUI)
-npm start
-
-# Build Windows installer (NSIS format, x64)
-npm run build
-```
-
-The built installer will be available in the `dist/` folder as `Sondakika.Setup.2.0.0.exe`.
-
----
-
-## 📦 What We Built in v2.0.0
-
-This release is a complete migration from the original CLI-only tool to a full-featured Windows desktop application:
-
-### Technical Implementation
-- ✅ Integrated **Electron 28.3.3** as the desktop application framework
-- ✅ Configured **electron-builder 24.13.3** with NSIS target for Windows x64
-- ✅ Designed and embedded a custom multi-size app icon (`assets/icon.ico` and `assets/icon.png`)
-- ✅ Built a portable Windows installer with automatic Start Menu/Desktop shortcuts
-- ✅ Implemented IPC communication between main and renderer processes
-- ✅ Created preload scripts for secure context isolation
-
-### GUI Development
-- ✅ Designed modern UI with **Inter font** and CSS custom properties for theming
-- ✅ Implemented **dark/light theme system** with CSS variables
-- ✅ Built **sidebar** with source selection checkboxes and settings controls
-- ✅ Created **card-based news grid** with hover effects and selection states
-- ✅ Developed **in-app article reader** with dedicated window and navigation
-- ✅ Added **keyboard navigation** support across all windows
-- ✅ Implemented **state persistence** using JSON files in userData directory
-- ✅ Added **font size controls** for accessibility (title and content separately)
-- ✅ Built **pagination system** with configurable items per page
-- ✅ Implemented **RSS parsing** with image extraction and date formatting
-- ✅ Added **loading skeletons** for better UX during news fetch
-- ✅ Created **Turkish language interface** throughout the application
-
-### News Source Integration
-- ✅ Integrated 9 major Turkish news RSS feeds
-- ✅ Implemented source-specific image extraction patterns (e.g., Gazete Vatan)
-- ✅ Added timezone correction for sources with incorrect UTC offsets (CNN Türk, Yeni Şafak)
-- ✅ Categorized sources as "Son Dakika" (Breaking News) vs regular news
-
----
-
-## 🤝 Contributing
-Contributions are welcome! Please follow these steps:
-1. Fork the repository
-2. Create a new branch for your feature (`git checkout -b feature/your-feature`)
-3. Commit your changes (`git commit -m "Add new feature"`)
-4. Push to the branch (`git push origin feature/your-feature`)
-5. Open a Pull Request
-
----
-
-## 📄 License
-This project is licensed under the ISC License - see the [LICENSE](LICENSE) file for details.
-
----
-
-*Developed by [Sedat Ergoz](https://github.com/eaeoz)*
-
----
-
 # Sondakika (Türkçe)
 
-**Windows için Modern Electron Tabanlı RSS Haber Okuyucu**  
-*Türkçe haberleri gerçek zamanlı toplayan, yerel masaüstü uygulaması*
+**Windows için Modern Electron Tabanlı RSS Haber Okuyucu + Eski CLI Aracı**  
+*Türkçe haberleri gerçek zamanlı toplayan yerel masaüstü uygulaması, artı orijinal terminal tabanlı CLI işlevselliği*
 
 [![Sürüm](https://img.shields.io/badge/sürüm-2.0.0-blue)](https://github.com/eaeoz/sondakika/releases)  
 [![Lisans](https://img.shields.io/badge/lisans-ISC-green)](LICENSE)  
@@ -210,8 +11,8 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
 ---
 
 ## 📋 İçindekiler
-1. [Genel Bakış](#-genel-bakış)
-2. [🪟 Windows Masaüstü Uygulaması](#-windows-masaüstü-uygulaması)
+1. [Genel Bakış](#-genel-bakış-1)
+2. [🪟 Windows Masaüstü Uygulaması (v2.0.0 GUI)](#-windows-masaüstü-uygulaması-v200-gui-1)
    - [Sondakika Nedir?](#sondakika-nedir)
    - [Nasıl Çalışır?](#nasıl-çalışır)
    - [Sistem Gereksinimleri](#sistem-gereksinimleri)
@@ -219,22 +20,29 @@ This project is licensed under the ISC License - see the [LICENSE](LICENSE) file
    - [Kurulum](#kurulum)
    - [Başlangıç](#başlangıç)
    - [Temel Özellikler](#temel-özellikler)
-3. [⌨️ Klavye Kısayolları](#️-klavye-kısayolları)
-4. [🛠️ Kaynaktan Derleme](#️-kaynaktan-derleme)
-5. [📦 v2.0.0'da Neler Yaptık?](#-v200da-neler-yaptık)
-6. [🤝 Katkıda Bulunma](#-katkıda-bulunma)
-7. [📄 Lisans](#-lisans)
+3. [⌨️ GUI Klavye Kısayolları](#️-gui-klavye-kısayolları)
+4. [⌨️ Eski CLI Kullanımı (v1.x)](#️-eski-cli-kullanımı-v1x)
+   - [CLI Özellikleri](#cli-özellikleri)
+   - [CLI Kurulumu](#cli-kurulumu)
+   - [CLI Kullanım Örnekleri](#cli-kullanım-örnekleri)
+   - [Mevcut Kaynaklar](#mevcut-kaynaklar)
+5. [🛠️ Kaynaktan Derleme](#️-kaynaktan-derleme)
+6. [📦 v2.0.0'da Neler Yaptık?](#-v200da-neler-yaptık)
+7. [🤝 Katkıda Bulunma](#-katkıda-bulunma)
+8. [📄 Lisans](#-lisans-1)
 
 ---
 
 ## 📖 Genel Bakış
-Sondakika, Electron ile geliştirilen ve büyük Türk haber kaynaklarını toplayan yerel bir Windows masaüstü uygulamasıdır. Modern, duyarlı arayüzü, karanlık/açık temaları, özelleştirilebilir yazı boyutları ve uygulama içi makale okuyucusu ile gelir.
+Sondakika iki modda mevcuttur:
+- **v2.0.0+**: Uygulama içi makale okuyucu, temalandırma ve klavye navigasyonu içeren tam özellikli yerel Windows Electron GUI
+- **v1.x Eski**: Türk RSS beslemelerinden terminalinizde doğrudan haber getirmek ve görüntülemek için hafif terminal tabanlı CLI aracı
 
-**Not:** Bu v2.0.0 sürümü, orijinal CLI aracından tam özellikli bir masaüstü GUI uygulamasına tamamen geçişi temsil eder.
+Varsayılan `npm start` komutu v2.0.0 Electron GUI'sini çalıştırır. Eski CLI işlevselliği, terminal tabanlı iş akışlarını tercih eden kullanıcılar için korunmuştur (tam CLI kodu için v1.x sürümlerine bakın).
 
 ---
 
-## 🪟 Windows Masaüstü Uygulaması
+## 🪟 Windows Masaüstü Uygulaması (v2.0.0 GUI)
 
 ### Sondakika Nedir?
 9 büyük Türk haber kaynağından (Cumhuriyet, TRT Haber, Mynet, Sabah, Star, Gazete Vatan, Habertürk, CNN Türk, Yeni Şafak, Anadolu Ajansı) gerçek zamanlı haberleri modern ve kolay okunabilir bir arayüzde getiren yerel bir Windows uygulaması.
@@ -262,7 +70,7 @@ Windows yükleyicisini doğrudan indirin:
 **Doğrudan Link:**  
 `https://github.com/eaeoz/sondakika/releases/download/2.0.0/Sondakika.Setup.2.0.0.exe`
 
-Veya tüm sürümler için [GitHub Releases sayfasını](https://github.com/eaeoz/sondakika/releases) ziyaret edin.
+Veya tüm sürümler için (v1.x CLI-only sürümleri dahil) [GitHub Releases sayfasını](https://github.com/eaeoz/sondakika/releases) ziyaret edin.
 
 ### Kurulum
 1. Yukarıdaki bağlantıyı kullanarak `Sondakika.Setup.2.0.0.exe` dosyasını indirin
@@ -296,7 +104,7 @@ Veya tüm sürümler için [GitHub Releases sayfasını](https://github.com/eaeo
 
 ---
 
-## ⌨️ Klavye Kısayolları
+## ⌨️ GUI Klavye Kısayolları
 
 ### Ana Pencere
 | Kısayol | Eylem |
@@ -323,6 +131,106 @@ Veya tüm sürümler için [GitHub Releases sayfasını](https://github.com/eaeo
 
 ---
 
+### CLI Özellikleri
+- 📰 Birden fazla Türk haber kaynağından haber getir
+- 🔗 Terminalde tıklanabilir URL'ler (iTerm2, Windows Terminal, macOS Terminal)
+- 🎨 Unicode kenarlıkları ile stillendirilmiş terminal çıktısı
+- ⚡ Hızlı ve hafif
+
+### CLI Kurulumu
+#### npx kullanarak (kurulum gerektirmez, sadece v1.x)
+```bash
+npx sondakika trt
+```
+
+#### Global kurulum (v1.x)
+```bash
+npm install -g sondakika
+```
+
+### CLI Kullanım Örnekleri
+```bash
+# Cumhuriyet haberlerini göster
+sondakika cumhuriyet
+
+# Cumhuriyet haberlerini özel sayıyla göster
+sondakika cumhuriyet 20
+
+# TRT Haber haberlerini göster
+sondakika trt
+
+# TRT Haber haberlerini özel sayıyla göster
+sondakika trt 15
+
+# Mynet haberlerini göster
+sondakika mynet
+
+# Mynet haberlerini özel sayıyla göster
+sondakika mynet 15
+
+# Sabah haberlerini göster
+sondakika sabah
+
+# Habertürk haberlerini özel sayıyla göster
+sondakika haberturk 5
+
+# Star haberlerini göster
+sondakika star
+
+# CNN Türk haberlerini göster
+sondakika cnnturk
+
+# Yeni Şafak haberlerini göster
+sondakika yenisafak
+
+# Anadolu Ajansı haberlerini göster
+sondakika aa
+```
+
+### Mevcut Kaynaklar
+#### Son Dakika (Breaking News)
+| Komut | Kaynak |
+|-------|--------|
+| `cumhuriyet` | Cumhuriyet |
+| `trt` | TRT Haber |
+| `mynet` | Mynet |
+
+#### Haberler (General News)
+| Komut | Kaynak |
+|-------|--------|
+| `sabah` | Sabah |
+| `star` | Star |
+| `vatan` | Gazete Vatan |
+| `haberturk` | Habertürk |
+| `cnnturk` | CNN Türk |
+| `yenisafak` | Yeni Şafak |
+| `aa` | Anadolu Ajansı |
+
+### CLI Yardım
+```bash
+sondakika
+# veya
+sondakika --help
+```
+
+### CLI Çıktı Örneği
+```
+📰 ══════════════════════════════════════════════════
+   Latest 10 News from TRT (Son Dakika)
+   Son guncelleme: 10.04.2026 20:02
+   ══════════════════════════════════════════════════
+
+  ┌─ 1. Son dakika deprem mi oldu?
+  │
+  │   📅 10.04.2026 20:02
+  │
+  │   Son depremler...
+  └─────────────────────────────────────────────────────────────────────
+  🔗 https://www.trt...
+```
+
+---
+
 ## 🛠️ Kaynaktan Derleme
 
 ```bash
@@ -330,10 +238,10 @@ Veya tüm sürümler için [GitHub Releases sayfasını](https://github.com/eaeo
 git clone https://github.com/eaeoz/sondakika.git
 cd sondakika
 
-# Bağımlılıkları yükleyin
+# Bağımlılıkları yükleyin (hem GUI hem de eski CLI bağımlılıklarını içerir)
 npm install
 
-# Geliştirme modunda çalıştır (Electron GUI)
+# v2.0.0 Electron GUI'sini çalıştır (varsayılan)
 npm start
 
 # Windows yükleyicisini derle (NSIS formatı, x64)
@@ -341,6 +249,8 @@ npm run build
 ```
 
 Derlenen yükleyici `dist/` klasöründe `Sondakika.Setup.2.0.0.exe` olarak bulunacaktır.
+
+Eski CLI işlevselliği üzerinde çalışmak için [eski sürümlerdeki](https://github.com/eaeoz/sondakika/releases) v1.x kaynak koduna bakın.
 
 ---
 
@@ -361,7 +271,7 @@ Bu sürüm, orijinal CLI aracından tam özellikli bir Windows masaüstü uygula
 - ✅ CSS değişkenleri ile **karanlık/açık tema sistemi** uygulandı
 - ✅ Kaynak seçim onay kutuları ve ayar kontrolleri ile **kenar çubuğu** oluşturuldu
 - ✅ Hover efektleri ve seçim durumları ile **kart tabanlı haber ızgarası** oluşturuldu
-- ✅Özel pencere ve gezinti ile **uygulama içi makale okuyucu** geliştirildi
+- ✅ Özel pencere ve gezinti ile **uygulama içi makale okuyucu** geliştirildi
 - ✅ Tüm pencerelerde **klavye navigasyonu** desteği eklendi
 - ✅ Kullanıcı verileri dizininde JSON dosyaları kullanarak **durum kalıcılığı** uygulandı
 - ✅ Erişilebilirlik için **yazı boyutu kontrolleri** eklendi (başlık ve içerik ayrı)
@@ -376,6 +286,11 @@ Bu sürüm, orijinal CLI aracından tam özellikli bir Windows masaüstü uygula
 - ✅ Yanlış UTC sapması olan kaynaklar için saat dilimi düzeltmesi eklendi (CNN Türk, Yeni Şafak)
 - ✅ Kaynaklar "Son Dakika" ve normal haber olarak kategorize edildi
 
+### Eski CLI Korunması
+- ✅ Terminal UI desteği için `blessed` bağımlılığı korundu
+- ✅ Eski kullanıcılar için tüm v1.x CLI belgeleri korundu
+- ✅ CLI'dan GUI'ye geçiş yapan kullanıcılar için geriye dönük uyumluluk notları tutuldu
+
 ---
 
 ## 🤝 Katkıda Bulunma
@@ -385,6 +300,8 @@ Katkılarınızı bekliyoruz! Lütfen şu adımları izleyin:
 3. Değişikliklerinizi işleyin (`git commit -m "Yeni özellik ekle"`)
 4. Dala gönderin (`git push origin feature/ozelliginiz`)
 5. Bir Pull Request açın
+
+CLI ile ilgili katkılar için v1.x kaynak kodu yapısına bakın.
 
 ---
 
