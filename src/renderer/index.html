@@ -887,6 +887,15 @@
             e.preventDefault();
             changeContentFontSize(1);
             break;
+
+          case '`':
+            e.preventDefault();
+            if (selectedIndex >= 0) {
+              var globalIdx = startIdx + selectedIndex;
+              var item = allNews[globalIdx];
+              if (item && item.link) window.electronAPI.openExternal(item.link);
+            }
+            break;
         }
       });
     }

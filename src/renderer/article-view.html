@@ -592,10 +592,15 @@
           e.preventDefault();
           changeContentFont(-1);
           break;
-        case '4':
-          e.preventDefault();
-          changeContentFont(1);
-          break;
+          case '4':
+            e.preventDefault();
+            changeContentFont(1);
+            break;
+
+          case '`':
+            e.preventDefault();
+            if (currentUrl) window.electronAPI.openExternal(currentUrl);
+            break;
       }
     });
 
