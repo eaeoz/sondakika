@@ -18,7 +18,7 @@ Terminal-based CLI tool to fetch and display breaking news from RSS feeds.
 ### Using npx (no install)
 
 ```bash
-npx sondakika ntv
+npx sondakika trt
 ```
 
 ### Global install
@@ -99,7 +99,7 @@ sondakika --help
 
 ```
 📰 ══════════════════════════════════════════════════
-   Latest 10 News from NTV (Son Dakika)
+   Latest 10 News from TRT (Son Dakika)
    Son guncelleme: 10.04.2026 20:02
    ══════════════════════════════════════════════════
 
@@ -109,7 +109,7 @@ sondakika --help
   │
   │   Son depremler...
   └─────────────────────────────────────────────────────────────────────
-  🔗 https://www.ntv.com.tr/...
+  🔗 https://www.trt...
 ```
 
 ## Development
