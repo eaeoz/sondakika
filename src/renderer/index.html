@@ -952,6 +952,8 @@
         dot.classList.add('loading');
         text.textContent = 'Yükleniyor...';
         btn.disabled = true;
+        // Show loading skeletons
+        showLoading();
         loadingGrid.classList.remove('hidden');
         newsGrid.classList.add('hidden');
         empty.classList.add('hidden');

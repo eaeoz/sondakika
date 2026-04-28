@@ -475,9 +475,13 @@
 
     // ── Bootstrap ───────────────────────────────────────────────────
     async function init() {
-        const data = await window.electronAPI.getData();
+      const data = await window.electronAPI.getData();
       newsItems  = data.newsItems || [];
       const startIdx = data.currentIndex || 0;
+      // Apply font size from main app
+      if (data.fontSize) {
+        document.body.style.fontSize = data.fontSize + 'px';
+      }
       renderArticle(startIdx);
     }
 

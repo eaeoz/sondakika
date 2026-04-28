@@ -1,0 +1,20 @@
+const { app, BrowserWindow, ipcMain, shell } = require('electron')
+const path = require('path')
+const fs = require('fs')
+const Parser = require('rss-parser')
+
+let mainWindow
+let articleWindow = null
+let articleWindowData = { newsItems: [], currentIndex: 0 }
+
+const parser = new Parser({
+  timeout: 10000,
+  requestOptions: {
+    headers: {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+    }
+  },
+  maxRedirects: 5
+})
+
+const dataDir = path.join(app.getPath('userData'), 'data')

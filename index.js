@@ -3,10 +3,36 @@
 const Parser = require('rss-parser')
 const fs = require('fs')
 const path = require('path')
+const os = require('os')
 const blessed = require('blessed')
 
 const packagePath = path.join(__dirname, 'package.json')
 const { version } = JSON.parse(fs.readFileSync(packagePath, 'utf8'))
+
+const STATE_DIR = path.join(os.homedir(), '.config', 'sondakika-cli')
+const STATE_FILE = path.join(STATE_DIR, 'state.json')
+
+const defaultCLIState = {
+  lastSource: 'ntv',
+  itemsPerPage: 10
+}
+
+function loadCLIState() {
+  try {
+    if (fs.existsSync(STATE_FILE)) {
+      const data = JSON.parse(fs.readFileSync(STATE_FILE, 'utf8'))
+      return { ...defaultCLIState, ...data }
+    }
+  } catch (e) {}
+  return { ...defaultCLIState }
+}
+
+function saveCLIState(state) {
+  try {
+    if (!fs.existsSync(STATE_DIR)) fs.mkdirSync(STATE_DIR, { recursive: true })
+    fs.writeFileSync(STATE_FILE, JSON.stringify(state, null, 2), 'utf8')
+  } catch (e) {}
+}
 
 const sources = {
   ntv: 'https://www.ntv.com.tr/son-dakika.rss',
@@ -242,6 +268,7 @@ function hideFullScreen(overlay) {
 
 async function main() {
   const args = process.argv.slice(2)
+  const cliState = loadCLIState()
 
   if (args.length === 0 || args[0] === '--help' || args[0] === '-h') {
     console.log(`
@@ -283,8 +310,13 @@ Examples:
     process.exit(0)
   }
 
-  const source = args[0]
-  const count = args[1] ? parseInt(args[1]) : 50
+  const source = args[0] || cliState.lastSource
+  const count = args[1] ? parseInt(args[1]) : cliState.itemsPerPage
+
+  // Save the source and count for next time
+  cliState.lastSource = source
+  cliState.itemsPerPage = count
+  saveCLIState(cliState)
 
   const sourceKey = source.toLowerCase()
   const info = sourceInfo[sourceKey] || { name: source.toUpperCase(), isSondakika: false }
@@ -386,6 +418,17 @@ Examples:
     } else {
       openFullScreen()
     }
+  })
+
+  // 'q' should NOT quit - remove default blessed quit handler
+  screen.unkey(['q', 'C-c'])
+  screen.key(['q'], () => {
+    // Do nothing - 'q' should not quit
+  })
+
+  // Use Escape or Ctrl+C to quit
+  screen.key(['escape', 'C-c'], () => {
+    process.exit(0)
   })
 
   list.on('select', (el, idx) => {
