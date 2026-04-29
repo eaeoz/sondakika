@@ -1,6 +1,6 @@
 {
   "name": "sondakika",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Modern Electron-based news reader with RSS feeds",
   "main": "src/main/main.js",
   "author": {
