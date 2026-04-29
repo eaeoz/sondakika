@@ -3,16 +3,17 @@
 **Windows için Modern Electron Tabanlı RSS Haber Okuyucu + Eski CLI Aracı**  
 *Türkçe haberleri gerçek zamanlı toplayan yerel masaüstü uygulaması, artı orijinal terminal tabanlı CLI işlevselliği*
 
-[![Sürüm](https://img.shields.io/badge/sürüm-2.0.0-blue)](https://github.com/eaeoz/sondakika/releases)  
+[![Sürüm](https://img.shields.io/badge/sürüm-2.0.1-blue)](https://github.com/eaeoz/sondakika/releases)  
+
 [![Lisans](https://img.shields.io/badge/lisans-ISC-green)](LICENSE)  
 [![Windows Desteği](https://img.shields.io/badge/Windows-10+-lightgrey)](https://www.microsoft.com/windows)  
-[![İndir](https://img.shields.io/badge/İndir-Windows%20Yükleyici-blue?style=for-the-badge)](https://github.com/eaeoz/sondakika/releases/download/2.0.0/Sondakika.Setup.2.0.0.exe)
+[![İndir](https://img.shields.io/badge/İndir-Windows%20Yükleyici-blue?style=for-the-badge)](https://github.com/eaeoz/sondakika/releases/download/2.0.1/Sondakika.Setup.2.0.1.exe)
 
 ---
 
 ## 📋 İçindekiler
 1. [Genel Bakış](#-genel-bakış-1)
-2. [🪟 Windows Masaüstü Uygulaması (v2.0.0 GUI)](#-windows-masaüstü-uygulaması-v200-gui-1)
+2. [🪟 Windows Masaüstü Uygulaması (v2.0.1 GUI)](#-windows-masaüstü-uygulaması-v201-gui-1)
    - [Sondakika Nedir?](#sondakika-nedir)
    - [Nasıl Çalışır?](#nasıl-çalışır)
    - [Sistem Gereksinimleri](#sistem-gereksinimleri)
@@ -35,14 +36,14 @@
 
 ## 📖 Genel Bakış
 Sondakika iki modda mevcuttur:
-- **v2.0.0+**: Uygulama içi makale okuyucu, temalandırma ve klavye navigasyonu içeren tam özellikli yerel Windows Electron GUI
+- **v2.0.1+**: Uygulama içi makale okuyucu, temalandırma ve klavye navigasyonu içeren tam özellikli yerel Windows Electron GUI
 - **v1.x Eski**: Türk RSS beslemelerinden terminalinizde doğrudan haber getirmek ve görüntülemek için hafif terminal tabanlı CLI aracı
 
-Varsayılan `npm start` komutu v2.0.0 Electron GUI'sini çalıştırır. Eski CLI işlevselliği, terminal tabanlı iş akışlarını tercih eden kullanıcılar için korunmuştur (tam CLI kodu için v1.x sürümlerine bakın).
+Varsayılan `npm start` komutu v2.0.1 Electron GUI'sini çalıştırır. Eski CLI işlevselliği, terminal tabanlı iş akışlarını tercih eden kullanıcılar için korunmuştur (tam CLI kodu için v1.x sürümlerine bakın).
 
 ---
 
-## 🪟 Windows Masaüstü Uygulaması (v2.0.0 GUI)
+## 🪟 Windows Masaüstü Uygulaması (v2.0.1 GUI)
 
 ### Sondakika Nedir?
 9 büyük Türk haber kaynağından (Cumhuriyet, TRT Haber, Mynet, Sabah, Star, Gazete Vatan, Habertürk, CNN Türk, Yeni Şafak, Anadolu Ajansı) gerçek zamanlı haberleri modern ve kolay okunabilir bir arayüzde getiren yerel bir Windows uygulaması.
@@ -65,15 +66,15 @@ Varsayılan `npm start` komutu v2.0.0 Electron GUI'sini çalıştırır. Eski CL
 
 Windows yükleyicisini doğrudan indirin:
 
-[![Sondakika 2.0.0 İndir](https://img.shields.io/badge/⬇️%20İndir-Windows%20Yükleyici%20(64-bit)-blue?style=for-the-badge)](https://github.com/eaeoz/sondakika/releases/download/2.0.0/Sondakika.Setup.2.0.0.exe)
+[![Sondakika 2.0.1 İndir](https://img.shields.io/badge/⬇️%20İndir-Windows%20Yükleyici%20(64-bit)-blue?style=for-the-badge)](https://github.com/eaeoz/sondakika/releases/download/2.0.1/Sondakika.Setup.2.0.1.exe)
 
 **Doğrudan Link:**  
-`https://github.com/eaeoz/sondakika/releases/download/2.0.0/Sondakika.Setup.2.0.0.exe`
+`https://github.com/eaeoz/sondakika/releases/download/2.0.1/Sondakika.Setup.2.0.1.exe`
 
 Veya tüm sürümler için (v1.x CLI-only sürümleri dahil) [GitHub Releases sayfasını](https://github.com/eaeoz/sondakika/releases) ziyaret edin.
 
 ### Kurulum
-1. Yukarıdaki bağlantıyı kullanarak `Sondakika.Setup.2.0.0.exe` dosyasını indirin
+1. Yukarıdaki bağlantıyı kullanarak `Sondakika.Setup.2.0.1.exe` dosyasını indirin
 2. Yükleyiciyi çalıştırın ve ekrandaki talimatları izleyin
 3. Uygulama kurulumdan sonra otomatik olarak başlayacaktır
 4. Başlat menüsüne ve Masaüstüne kısayollar eklenecektir
@@ -241,16 +242,29 @@ cd sondakika
 # Bağımlılıkları yükleyin (hem GUI hem de eski CLI bağımlılıklarını içerir)
 npm install
 
-# v2.0.0 Electron GUI'sini çalıştır (varsayılan)
+# v2.0.1 Electron GUI'sini çalıştır (varsayılan)
 npm start
 
 # Windows yükleyicisini derle (NSIS formatı, x64)
 npm run build
 ```
 
-Derlenen yükleyici `dist/` klasöründe `Sondakika.Setup.2.0.0.exe` olarak bulunacaktır.
+Derlenen yükleyici `dist/` klasöründe `Sondakika.Setup.2.0.1.exe` olarak bulunacaktır.
 
 Eski CLI işlevselliği üzerinde çalışmak için [eski sürümlerdeki](https://github.com/eaeoz/sondakika/releases) v1.x kaynak koduna bakın.
+
+---
+
+## 📦 v2.0.1 Güncellemesi
+
+### Düzeltilen Sorunlar
+- ✅ Liste görünümündeki "Tarayıcıda Aç" (🔗) butonu artık doğru şekilde çalışıyor - kart tıklaması yerine bağlantıyı harici tarayıcıda açıyor
+- ✅ CLI Cumhuriyet kaynağı ayrıştırma sorunu giderildi
+- ✅ CLI kodu düzenli bir klasöre taşındı
+
+### İyileştirmeler
+- ✅ Daha iyi olay işleme (event handling) için programatik event listener'lar eklendi
+- ✅ URL güvenliği için JSON.stringify ile güvenli bağlantı işleme
 
 ---
 
