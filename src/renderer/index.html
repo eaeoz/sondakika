@@ -1133,13 +1133,29 @@
           '<h2 class="news-title">' + escapedTitle + '</h2>' +
           '<p class="news-summary">' + escapedSummary + '</p>' +
           '<div class="news-card-footer">' +
-            '<span class="read-more" onclick="event.stopPropagation(); window.openArticleView(' + newsIndex + ')">Görüntüle</span>' +
-            '<span class="external-link-btn" onclick="event.stopPropagation(); window.electronAPI.openExternal(\"' + news.link + '\"")">🔗 Tarayıcıda aç</span>' +
+            '<span class="read-more" data-index="' + newsIndex + '">Görüntüle</span>' +
+            '<span class="external-link-btn" data-link="' + escapeHtml(news.link) + '">🔗 Tarayıcıda aç</span>' +
           '</div>' +
         '</article>';
       });
 
       grid.innerHTML = html;
+
+      // Attach event listeners to footer buttons
+      grid.querySelectorAll('.read-more').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          window.openArticleView(parseInt(this.dataset.index));
+        });
+      });
+
+      grid.querySelectorAll('.external-link-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          window.electronAPI.openExternal(this.dataset.link);
+        });
+      });
 
       renderPagination(totalPages);
 
