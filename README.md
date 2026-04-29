@@ -66,8 +66,6 @@ Varsayılan `npm start` komutu v2.0.1 Electron GUI'sini çalıştırır. Eski CL
 
 Windows yükleyicisini doğrudan indirin:
 
-[![Sondakika 2.0.1 İndir](https://img.shields.io/badge/⬇️%20İndir-Windows%20Yükleyici%20(64-bit)-blue?style=for-the-badge)](https://github.com/eaeoz/sondakika/releases/download/2.0.1/Sondakika.Setup.2.0.1.exe)
-
 **Doğrudan Link:**  
 `https://github.com/eaeoz/sondakika/releases/download/2.0.1/Sondakika.Setup.2.0.1.exe`
 
