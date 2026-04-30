@@ -1,17 +1,16 @@
 # Sondakika
+
 **Windows için Modern Electron Tabanlı RSS Haber Okuyucu + Eski CLI Aracı**  
 *Türkçe haberleri gerçek zamanlı toplayan yerel masaüstü uygulaması, artı orijinal terminal tabanlı CLI işlevselliği*
-
 [![Sürüm](https://img.shields.io/badge/sürüm-2.0.2-blue)](https://github.com/eaeoz/sondakika/releases)  
-[![Lisans](https://img.shields.io/badge/lisans-ISC-green)](LICENSE)  
 [![Windows Desteği](https://img.shields.io/badge/Windows-10+-lightgrey)](https://www.microsoft.com/windows)  
 [![İndir](https://img.shields.io/badge/İndir-Windows%20Yükleyici-blue?style=for-the-badge)](https://github.com/eaeoz/sondakika/releases/download/2.0.2/Sondakika.Setup.2.0.2.exe)
 
 ---
 
 ## 📋 İçindekiler
-1. [Genel Bakış](#genel-bakış)
-2. [🪟 Windows Masaüstü Uygulaması (v2.0.2 GUI)](#-windows-masaüstü-uygulaması-v202-gui)
+1. [Genel Bakış](#-genel-bakış-1)
+2. [🪟 Windows Masaüstü Uygulaması (v2.0.2 GUI)](#-windows-masaüstü-uygulaması-v202-gui-1)
    - [Sondakika Nedir?](#sondakika-nedir)
    - [Nasıl Çalışır?](#nasıl-çalışır)
    - [Sistem Gereksinimleri](#sistem-gereksinimleri)
@@ -26,25 +25,25 @@
    - [CLI Kullanım Örnekleri](#cli-kullanım-örnekleri)
    - [Mevcut Kaynaklar](#mevcut-kaynaklar)
 5. [🛠️ Kaynaktan Derleme](#️-kaynaktan-derleme)
-6. [📦 v2.0.2'de Neler Yaptık?](#-v202de-neler-yaptık)
+6. [📦 v2.0.0'da Neler Yaptık?](#-v200da-neler-yaptık)
 7. [🤝 Katkıda Bulunma](#-katkıda-bulunma)
-8. [📄 Lisans](#-lisans)
+8. [📄 Lisans](#-lisans-1)
 
 ---
 
-## Genel Bakış
-Sondakika iki modda sunulur:
+## 📖 Genel Bakış
+Sondakika iki modda mevcuttur:
 - **v2.0.2+**: Uygulama içi makale okuyucu, temalandırma ve klavye navigasyonu içeren tam özellikli yerel Windows Electron GUI
-- **v1.x Eski**: Türk RSS beslemelerinden terminalde doğrudan haber getirmek için hafif terminal tabanlı CLI aracı
+- **v1.x Eski**: Türk RSS beslemelerinden terminalinizde doğrudan haber getirmek ve görüntülemek için hafif terminal tabanlı CLI aracı
 
-Varsayılan `npm start` komutu v2.0.2 Electron GUI'sini çalıştırır. Eski CLI işlevselliği, terminal tabanlı iş akışlarını tercih eden kullanıcılar için korunmuştur (tam CLI kodu için [v1.x sürümlerine](https://github.com/eaeoz/sondakika/releases) bakın).
+Varsayılan `npm start` komutu v2.0.2 Electron GUI'sini çalıştırır. Eski CLI işlevselliği, terminal tabanlı iş akışlarını tercih eden kullanıcılar için korunmuştur (tam CLI kodu için v1.x sürümlerine bakın).
 
 ---
 
 ## 🪟 Windows Masaüstü Uygulaması (v2.0.2 GUI)
 
 ### Sondakika Nedir?
-9 büyük Türk haber kaynağından (Cumhuriyet, TRT Haber, Mynet, Sabah, Star, Gazete Vatan, Habertürk, CNN Türk, Yeni Şafak, Anadolu Ajansı) gerçek zamanlı haberleri modern ve kolay okunabilir bir arayüzde getiren yerel bir Windows uygulamasıdır.
+9 büyük Türk haber kaynağından (Cumhuriyet, TRT Haber, Mynet, Sabah, Star, Gazete Vatan, Habertürk, CNN Türk, Yeni Şafak, Anadolu Ajansı) gerçek zamanlı haberleri modern ve kolay okunabilir bir arayüzde getiren yerel bir Windows uygulaması.
 
 ### Nasıl Çalışır?
 1. Uygulama, yapılandırılmış Türk haber kaynaklarından RSS beslemelerini almak için `rss-parser` kullanır
@@ -61,9 +60,8 @@ Varsayılan `npm start` komutu v2.0.2 Electron GUI'sini çalıştırır. Eski CL
 - Haberleri çekmek için internet bağlantısı
 
 ### 📥 İndirme
-Windows yükleyicisini doğrudan indirin:
 
-[![Sondakika 2.0.2 İndir](https://img.shields.io/badge/⬇️%20İndir-Windows%20Yükleyici%20(64-bit)-blue?style=for-the-badge)](https://github.com/eaeoz/sondakika/releases/download/2.0.2/Sondakika.Setup.2.0.2.exe)
+Windows yükleyicisini doğrudan indirin:
 
 **Doğrudan Link:**  
 `https://github.com/eaeoz/sondakika/releases/download/2.0.2/Sondakika.Setup.2.0.2.exe`
@@ -105,32 +103,27 @@ Veya tüm sürümler için (v1.x CLI-only sürümleri dahil) [GitHub Releases sa
 ## ⌨️ GUI Klavye Kısayolları
 
 ### Ana Pencere
-| Kısayol | Eylem |
-|---------|-------|
-| `↑` `↓` | Haber makalesi seç |
-| `←` `→` | Sayfalar arasında gezinti |
-| `Enter` | Seçili makaleyi okuyucuda aç |
-| `1` `2` | Başlık yazı boyutunu azalt/artır |
-| `3` `4` | İçerik yazı boyutunu azalt/artır |
-| `` ` `` | Seçili makaleyi tarayıcıda aç |
-| `F5` / Yenile'ye Tıkla | En son haberleri getir |
+
+- `↑` `↓` | Haber makalesi seç 
+- `←` `→` | Sayfalar arasında gezinti 
+- `Enter` | Seçili makaleyi okuyucuda aç 
+- `1` `2` | Başlık yazı boyutunu azalt/artır 
+- `3` `4` | İçerik yazı boyutunu azalt/artır 
+- `` ` `` | Seçili makaleyi tarayıcıda aç 
+- `F5` | Yenile'ye Tıkla | En son haberleri getir 
 
 ### Makale Okuyucu
-| Kısayol | Eylem |
-|---------|-------|
-| `↑` `↓` `Space` | Makale içeriğini kaydır |
-| `PageUp` `PageDown` | Sayfa sayfa kaydır |
-| `Home` `End` | En üste/en alta kaydır |
-| `←` `→` | Önceki/Sonraki makale |
-| `Enter` `Escape` | Haber listesine dön |
-| `1` `2` | Başlık yazı boyutunu azalt/artır |
-| `3` `4` | İçerik yazı boyutunu azalt/artır |
-| `` ` `` | Makaleyi tarayıcıda aç |
+
+- `↑` `↓` `Space` | Makale içeriğini kaydır 
+- `PageUp` `PageDown` | Sayfa sayfa kaydır 
+- `Home` `End` | En üste/en alta kaydır 
+- `←` `→` | Önceki/Sonraki makale 
+- `Enter` `Escape` | Haber listesine dön 
+- `1` `2` | Başlık yazı boyutunu azalt/artır 
+- `3` `4` | İçerik yazı boyutunu azalt/artır 
+- `` ` `` | Makaleyi tarayıcıda aç 
 
 ---
-
-## ⌨️ Eski CLI Kullanımı (v1.x)
-*Not: v2.0.2 kod tabanı Electron GUI'sine odaklanmıştır. Aşağıdaki CLI işlevselliği v1.x sürümlerinden korunmuştur. Tam CLI aracını kullanmak için [v1.x sürümlerine](https://github.com/eaeoz/sondakika/releases) bakın veya `npm install -g sondakika@1.x` ile eski sürümü yükleyin.*
 
 ### CLI Özellikleri
 - 📰 Birden fazla Türk haber kaynağından haber getir
@@ -141,12 +134,12 @@ Veya tüm sürümler için (v1.x CLI-only sürümleri dahil) [GitHub Releases sa
 ### CLI Kurulumu
 #### npx kullanarak (kurulum gerektirmez, sadece v1.x)
 ```bash
-npx sondakika@1.x trt
+npx sondakika trt
 ```
 
 #### Global kurulum (v1.x)
 ```bash
-npm install -g sondakika@1.x
+npm install -g sondakika
 ```
 
 ### CLI Kullanım Örnekleri
@@ -190,22 +183,20 @@ sondakika aa
 
 ### Mevcut Kaynaklar
 #### Son Dakika (Breaking News)
-| Komut | Kaynak |
-|-------|--------|
-| `cumhuriyet` | Cumhuriyet |
-| `trt` | TRT Haber |
-| `mynet` | Mynet |
+
+- `cumhuriyet` | Cumhuriyet 
+- `trt` | TRT Haber 
+- `mynet` | Mynet 
 
 #### Haberler (General News)
-| Komut | Kaynak |
-|-------|--------|
-| `sabah` | Sabah |
-| `star` | Star |
-| `vatan` | Gazete Vatan |
-| `haberturk` | Habertürk |
-| `cnnturk` | CNN Türk |
-| `yenisafak` | Yeni Şafak |
-| `aa` | Anadolu Ajansı |
+
+- `sabah` | Sabah 
+- `star` | Star 
+- `vatan` | Gazete Vatan 
+- `haberturk` | Habertürk 
+- `cnnturk` | CNN Türk 
+- `yenisafak` | Yeni Şafak 
+- `aa` | Anadolu Ajansı 
 
 ### CLI Yardım
 ```bash
@@ -226,7 +217,7 @@ sondakika --help
   │   📅 10.04.2026 20:02
   │
   │   Son depremler...
-  └─────────────────────────────────────────────────────────────────────
+└─────────────────────────────────────────────────────────────────────
   🔗 https://www.trt...
 ```
 
@@ -255,7 +246,21 @@ Eski CLI işlevselliği üzerinde çalışmak için [eski sürümlerdeki](https:
 
 ---
 
-## 📦 v2.0.2'de Neler Yaptık?
+## 📦 v2.0.2 Güncellemesi
+
+### Düzeltilen Sorunlar
+- ✅ Liste görünümündeki "Tarayıcıda Aç" (🔗) butonu artık doğru şekilde çalışıyor - kart tıklaması yerine bağlantıyı harici tarayıcıda açıyor
+- ✅ CLI Cumhuriyet kaynağı ayrıştırma sorunu giderildi
+- ✅ CLI kodu düzenli bir klasöre taşındı
+
+### İyileştirmeler
+- ✅ Daha iyi olay işleme (event handling) için programatik event listener'lar eklendi
+- ✅ URL güvenliği için JSON.stringify ile güvenli bağlantı işleme
+
+---
+
+## 📦 v2.0.0'da Neler Yaptık?
+
 Bu sürüm, orijinal CLI aracından tam özellikli bir Windows masaüstü uygulamasına tam geçiştir:
 
 ### Teknik Uygulama

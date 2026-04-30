@@ -1,6 +1,6 @@
 {
   "name": "sondakika",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "Full-featured Turkish news CLI with interactive UI. Identical news sources, parsing, and image extraction as the Electron desktop app. 10 major Turkish news sources with blessed terminal interface.",
   "bin": {
     "sondakika": "./cli.js"
