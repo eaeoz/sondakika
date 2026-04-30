@@ -276,6 +276,9 @@ ipcMain.handle('set-theme', (event, theme) => {
   const state = loadState()
   state.theme = theme
   saveState(state)
+  if (articleWindow && !articleWindow.isDestroyed()) {
+    articleWindow.webContents.send('theme-changed', theme)
+  }
   return true
 })
 
@@ -299,7 +302,8 @@ ipcMain.handle('open-article-view', async (event, newsItems, currentIndex) => {
       currentIndex,
       fontSize: state.fontSize || 16,
       titleFontSize: state.titleFontSize || 17,
-      contentFontSize: state.contentFontSize || 14
+      contentFontSize: state.contentFontSize || 14,
+      theme: state.theme || 'dark'
     }
     articleWindow.focus()
     articleWindow.webContents.send('article-view-navigate', articleWindowData)
@@ -311,9 +315,12 @@ ipcMain.handle('open-article-view', async (event, newsItems, currentIndex) => {
     currentIndex,
     fontSize: state.fontSize || 16,
     titleFontSize: state.titleFontSize || 17,
-    contentFontSize: state.contentFontSize || 14
+    contentFontSize: state.contentFontSize || 14,
+    theme: state.theme || 'dark'
   }
   const mainBounds = mainWindow ? mainWindow.getBounds() : { width: 1200, height: 800, x: 100, y: 50 }
+  const theme = state.theme || 'dark'
+  const bgColor = theme === 'light' ? '#f8fafc' : '#0f0f1a'
 
   articleWindow = new BrowserWindow({
     width: mainBounds.width,
@@ -329,7 +336,7 @@ ipcMain.handle('open-article-view', async (event, newsItems, currentIndex) => {
       contextIsolation: true,
       nodeIntegration: false
     },
-    backgroundColor: '#0f0f1a',
+    backgroundColor: bgColor,
     show: false,
     frame: true,
     autoHideMenuBar: true,

@@ -27,6 +27,22 @@
       --error:        #ef4444;
     }
 
+    .theme-light {
+      --bg-primary:   #f8fafc;
+      --bg-secondary: #ffffff;
+      --bg-card:      #f1f5f9;
+      --bg-elevated:  #e2e8f0;
+      --accent:       #6366f1;
+      --accent-sec:   #818cf8;
+      --accent-hover: #4f46e5;
+      --text-primary: #0f172a;
+      --text-sec:     #475569;
+      --text-muted:   #94a3b8;
+      --border:       #e2e8f0;
+      --breaking:     #dc2626;
+      --error:        #ef4444;
+    }
+
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: var(--bg-primary);
@@ -617,6 +633,20 @@
       if (currentUrl) window.electronAPI.openExternal(currentUrl);
     });
 
+    function applyTheme(theme) {
+      document.body.classList.remove('theme-light');
+      if (theme === 'light') {
+        document.body.classList.add('theme-light');
+      }
+    }
+
+    // Listen for theme changes from main process
+    if (window.electronAPI && window.electronAPI.onThemeChanged) {
+      window.electronAPI.onThemeChanged((theme) => {
+        applyTheme(theme);
+      });
+    }
+
     // Bootstrap
     async function init() {
       const data = await window.electronAPI.getData();
@@ -634,6 +664,9 @@
         contentFontSize = data.contentFontSize;
         const cf = el('contentFontVal');
         if (cf) cf.textContent = contentFontSize + 'px';
+      }
+      if (data.theme) {
+        applyTheme(data.theme);
       }
       renderArticle(startIdx);
     }
