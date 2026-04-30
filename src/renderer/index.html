@@ -667,6 +667,16 @@
               <option value="light">Açık</option>
             </select>
           </div>
+          <div class="option-item">
+            <span class="option-label">Scroll Delay</span>
+            <select class="option-select" id="autoPlayDelay" onchange="changeAutoPlayDelay(this.value)">
+              <option value="3000">3 Saniye</option>
+              <option value="5000" selected>5 Saniye</option>
+              <option value="7000">7 Saniye</option>
+              <option value="10000">10 Saniye</option>
+              <option value="15000">15 Saniye</option>
+            </select>
+          </div>
         </div>
       </div>
     </aside>
@@ -931,6 +941,7 @@
       el = document.getElementById('titleFontSizeValue'); if (el) el.textContent = (currentState.titleFontSize || 17) + 'px';
       el = document.getElementById('contentFontSizeValue'); if (el) el.textContent = (currentState.contentFontSize || 14) + 'px';
       el = document.getElementById('themeSelect'); if (el) el.value = currentState.theme || 'dark';
+      el = document.getElementById('autoPlayDelay'); if (el) el.value = currentState.autoPlayDelay || 5000;
       applyFontSize(currentState.fontSize);
       applyTitleFontSize(currentState.titleFontSize || 17);
       applyContentFontSize(currentState.contentFontSize || 14);
@@ -1266,6 +1277,12 @@
         updateSelectedCard();
       }
     });
+
+    async function changeAutoPlayDelay(delay) {
+      currentState.autoPlayDelay = parseInt(delay);
+      await saveState();
+      await window.electronAPI.setAutoPlayDelay(currentState.autoPlayDelay);
+    }
 
     // Don't call showLoading() here - it will be called by setLoading(true) when fetchNews runs
     init();

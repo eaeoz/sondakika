@@ -42,7 +42,8 @@ const defaultState = {
   fontSize: 16,
   titleFontSize: 17,
   contentFontSize: 14,
-  theme: 'dark'
+  theme: 'dark',
+  autoPlayDelay: 5000
 }
 
 function ensureDataDir() {
@@ -282,6 +283,13 @@ ipcMain.handle('set-theme', (event, theme) => {
   return true
 })
 
+ipcMain.handle('set-auto-play-delay', (event, delay) => {
+  const state = loadState()
+  state.autoPlayDelay = delay
+  saveState(state)
+  return true
+})
+
 ipcMain.handle('fetch-news', async (event, enabledSources, sortOrder) => {
   let items = await fetchAllNews(enabledSources)
   items = sortNews(items, sortOrder)
@@ -303,7 +311,8 @@ ipcMain.handle('open-article-view', async (event, newsItems, currentIndex) => {
       fontSize: state.fontSize || 16,
       titleFontSize: state.titleFontSize || 17,
       contentFontSize: state.contentFontSize || 14,
-      theme: state.theme || 'dark'
+      theme: state.theme || 'dark',
+      autoPlayDelay: state.autoPlayDelay || 5000
     }
     articleWindow.focus()
     articleWindow.webContents.send('article-view-navigate', articleWindowData)
@@ -316,7 +325,8 @@ ipcMain.handle('open-article-view', async (event, newsItems, currentIndex) => {
     fontSize: state.fontSize || 16,
     titleFontSize: state.titleFontSize || 17,
     contentFontSize: state.contentFontSize || 14,
-    theme: state.theme || 'dark'
+    theme: state.theme || 'dark',
+    autoPlayDelay: state.autoPlayDelay || 5000
   }
   const mainBounds = mainWindow ? mainWindow.getBounds() : { width: 1200, height: 800, x: 100, y: 50 }
   const theme = state.theme || 'dark'

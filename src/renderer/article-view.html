@@ -353,6 +353,79 @@
       margin: 0 2px;
     }
 
+    /* Floating Play/Pause Button */
+    .autoplay-btn {
+      position: fixed;
+      bottom: 80px;
+      right: 24px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent-sec));
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+      animation: float 3s ease-in-out infinite;
+    }
+    .autoplay-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 12px 32px rgba(99, 102, 241, 0.6);
+    }
+    .autoplay-btn:active {
+      transform: scale(0.95);
+    }
+    .autoplay-btn.playing {
+      animation: float 3s ease-in-out infinite, pulse-ring 2s ease-out infinite;
+    }
+    .autoplay-btn .btn-icon {
+      transition: transform 0.3s ease;
+    }
+    .autoplay-btn.playing .btn-icon {
+      animation: rotate-icon 2s linear infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    @keyframes pulse-ring {
+      0% { box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4), 0 0 0 0 rgba(99, 102, 241, 0.4); }
+      70% { box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4), 0 0 0 15px rgba(99, 102, 241, 0); }
+      100% { box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4), 0 0 0 0 rgba(99, 102, 241, 0); }
+    }
+    @keyframes rotate-icon {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Timer progress ring */
+    .autoplay-btn .progress-ring {
+      position: absolute;
+      top: -3px;
+      left: -3px;
+      width: 62px;
+      height: 62px;
+      transform: rotate(-90deg);
+    }
+    .autoplay-btn .progress-ring circle {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.3);
+      stroke-width: 3;
+      stroke-dasharray: 194.78;
+      stroke-dashoffset: 194.78;
+      transition: stroke-dashoffset 0.1s linear;
+    }
+    .autoplay-btn.playing .progress-ring circle {
+      stroke: rgba(255, 255, 255, 0.8);
+    }
+
     /* Slide animations */
     @keyframes slideInRight {
       from { opacity: 0; transform: translateX(60px); }
@@ -420,6 +493,7 @@
         <div class="keys-hint">
           <kbd>↑</kbd><kbd>↓</kbd> Kaydır &nbsp;
           <kbd>←</kbd><kbd>→</kbd> Haber &nbsp;
+          <kbd>Space</kbd> Oynat/Duraklat &nbsp;
           <kbd>1</kbd><kbd>2</kbd> Başlık &nbsp;
           <kbd>3</kbd><kbd>4</kbd> İçerik &nbsp;
           <kbd>`</kbd> Tarayıcı &nbsp;
@@ -430,12 +504,25 @@
     <button class="nav-btn" id="nextBtn">Sonraki →</button>
   </div>
 
+  <!-- Floating Auto-Play Button -->
+  <button class="autoplay-btn" id="autoplayBtn" title="Otomatik Geçiş (Space)">
+    <svg class="progress-ring" viewBox="0 0 62 62">
+      <circle cx="31" cy="31" r="31" id="progressCircle"/>
+    </svg>
+    <span class="btn-icon" id="btnIcon">▶</span>
+  </button>
+
   <script>
     let newsItems   = [];
     let currentIdx  = 0;
     let currentUrl  = '';
     let titleFontSize = 28;
     let contentFontSize = 17;
+    let autoPlayDelay = 5000;
+    let autoPlayTimer = null;
+    let isPlaying = false;
+    let progressInterval = null;
+    let progressStart = 0;
 
     function el(id) {
       return document.getElementById(id);
@@ -449,6 +536,69 @@
         day: '2-digit', month: '2-digit', year: 'numeric',
         hour: '2-digit', minute: '2-digit'
       });
+    }
+
+    function startAutoPlay() {
+      if (isPlaying || newsItems.length <= 1) return;
+      isPlaying = true;
+      progressStart = Date.now();
+      const btn = el('autoplayBtn');
+      const icon = el('btnIcon');
+      if (btn) btn.classList.add('playing');
+      if (icon) icon.textContent = '⏸';
+      updateProgress();
+      // Update progress every 100ms
+      progressInterval = setInterval(() => {
+        updateProgress();
+      }, 100);
+      autoPlayTimer = setTimeout(() => {
+        navigate(1);
+        if (isPlaying) startAutoPlay();
+      }, autoPlayDelay);
+    }
+
+    function stopAutoPlay() {
+      isPlaying = false;
+      if (autoPlayTimer) {
+        clearTimeout(autoPlayTimer);
+        autoPlayTimer = null;
+      }
+      if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
+      }
+      const btn = el('autoplayBtn');
+      const icon = el('btnIcon');
+      if (btn) {
+        btn.classList.remove('playing');
+      }
+      if (icon) icon.textContent = '▶';
+      updateProgress(0);
+    }
+
+    function toggleAutoPlay() {
+      if (isPlaying) {
+        stopAutoPlay();
+      } else {
+        startAutoPlay();
+      }
+    }
+
+    function updateProgress(forcePercent) {
+      const circle = el('progressCircle');
+      if (!circle) return;
+      const circumference = 2 * Math.PI * 31;
+      let percent;
+      if (forcePercent !== undefined) {
+        percent = forcePercent;
+      } else if (isPlaying) {
+        const elapsed = Date.now() - progressStart;
+        percent = Math.min(elapsed / autoPlayDelay, 1);
+      } else {
+        percent = 0;
+      }
+      const offset = circumference - (percent * circumference);
+      circle.style.strokeDashoffset = offset;
     }
 
     function renderArticle(idx, slideDir) {
@@ -467,6 +617,17 @@
 
       const scroll = el('articleScroll');
       if (scroll) scroll.scrollTop = 0;
+
+      // Reset timer on navigation
+      if (isPlaying) {
+        progressStart = Date.now();
+        updateProgress();
+        if (autoPlayTimer) clearTimeout(autoPlayTimer);
+        autoPlayTimer = setTimeout(() => {
+          navigate(1);
+          if (isPlaying) startAutoPlay();
+        }, autoPlayDelay);
+      }
 
       const tbSource = el('tbSource');
       if (tbSource) {
@@ -532,6 +693,7 @@
     }
 
     function returnToMain() {
+      stopAutoPlay();
       window.electronAPI.close(currentIdx);
     }
 
@@ -560,13 +722,16 @@
 
       switch (e.key) {
         case 'ArrowDown':
-        case ' ':
           e.preventDefault();
           scroll.scrollBy({ top: 140, behavior: 'smooth' });
           break;
         case 'ArrowUp':
           e.preventDefault();
           scroll.scrollBy({ top: -140, behavior: 'smooth' });
+          break;
+        case ' ':
+          e.preventDefault();
+          toggleAutoPlay();
           break;
         case 'PageDown':
           e.preventDefault();
@@ -609,15 +774,14 @@
           e.preventDefault();
           changeContentFont(-1);
           break;
-          case '4':
-            e.preventDefault();
-            changeContentFont(1);
-            break;
-
-          case '`':
-            e.preventDefault();
-            if (currentUrl) window.electronAPI.openExternal(currentUrl);
-            break;
+        case '4':
+          e.preventDefault();
+          changeContentFont(1);
+          break;
+        case '`':
+          e.preventDefault();
+          if (currentUrl) window.electronAPI.openExternal(currentUrl);
+          break;
       }
     });
 
@@ -652,6 +816,7 @@
       const data = await window.electronAPI.getData();
       newsItems  = data.newsItems || [];
       const startIdx = data.currentIndex || 0;
+      autoPlayDelay = data.autoPlayDelay || 5000;
       if (data.fontSize) {
         document.body.style.fontSize = data.fontSize + 'px';
       }
@@ -669,6 +834,12 @@
         applyTheme(data.theme);
       }
       renderArticle(startIdx);
+
+      // Auto-play button event
+      const autoplayBtn = el('autoplayBtn');
+      if (autoplayBtn) {
+        autoplayBtn.addEventListener('click', toggleAutoPlay);
+      }
     }
 
     if (document.readyState === 'loading') {
