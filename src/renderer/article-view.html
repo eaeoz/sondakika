@@ -25,6 +25,8 @@
       --border:       #334155;
       --breaking:     #ef4444;
       --error:        #ef4444;
+      --ring-bg:      rgba(255, 255, 255, 0.3);
+      --ring-fg:      rgba(255, 255, 255, 0.8);
     }
 
     .theme-light {
@@ -41,6 +43,8 @@
       --border:       #e2e8f0;
       --breaking:     #dc2626;
       --error:        #ef4444;
+      --ring-bg:      rgba(239, 68, 68, 0.25);
+      --ring-fg:      rgba(239, 68, 68, 0.9);
     }
 
     body {
@@ -408,22 +412,24 @@
     /* Timer progress ring */
     .autoplay-btn .progress-ring {
       position: absolute;
-      top: -3px;
-      left: -3px;
-      width: 62px;
-      height: 62px;
+      top: -6px;
+      left: -6px;
+      width: 68px;
+      height: 68px;
       transform: rotate(-90deg);
     }
     .autoplay-btn .progress-ring circle {
       fill: none;
-      stroke: rgba(255, 255, 255, 0.3);
+      stroke: var(--ring-bg);
       stroke-width: 3;
-      stroke-dasharray: 194.78;
-      stroke-dashoffset: 194.78;
+      stroke-dasharray: 213.63;
+      stroke-dashoffset: 213.63;
       transition: stroke-dashoffset 0.1s linear;
+      filter: drop-shadow(0 0 3px var(--ring-fg));
     }
     .autoplay-btn.playing .progress-ring circle {
-      stroke: rgba(255, 255, 255, 0.8);
+      stroke: var(--ring-fg);
+      filter: drop-shadow(0 0 6px var(--ring-fg));
     }
 
     /* Slide animations */
@@ -506,8 +512,8 @@
 
   <!-- Floating Auto-Play Button -->
   <button class="autoplay-btn" id="autoplayBtn" title="Otomatik Geçiş (Space)">
-    <svg class="progress-ring" viewBox="0 0 62 62">
-      <circle cx="31" cy="31" r="31" id="progressCircle"/>
+    <svg class="progress-ring" viewBox="0 0 68 68">
+      <circle cx="34" cy="34" r="34" id="progressCircle"/>
     </svg>
     <span class="btn-icon" id="btnIcon">▶</span>
   </button>
@@ -587,7 +593,7 @@
     function updateProgress(forcePercent) {
       const circle = el('progressCircle');
       if (!circle) return;
-      const circumference = 2 * Math.PI * 31;
+      const circumference = 2 * Math.PI * 34;
       let percent;
       if (forcePercent !== undefined) {
         percent = forcePercent;
