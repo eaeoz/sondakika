@@ -426,6 +426,9 @@
       stroke: var(--progress-ring-fg);
       filter: drop-shadow(0 0 6px var(--progress-ring-fg));
     }
+    .autoplay-btn.speech-mode .progress-ring {
+      display: none !important;
+    }
 
     /* Slide animations */
     @keyframes slideInRight {
@@ -524,6 +527,9 @@
     let autoPlayDelay = 5000;
     let autoPlayTimer = null;
     let isPlaying = false;
+    let speechEnabled = false;
+    let speechSynth = window.speechSynthesis;
+    let currentUtterance = null;
     function el(id) {
       return document.getElementById(id);
     }
@@ -546,15 +552,24 @@
       isPlaying = true;
       const btn = el('autoplayBtn');
       const iconPath = el('iconPath');
-      if (btn) btn.classList.add('playing');
+      if (btn) {
+        btn.classList.add('playing');
+        // Add/remove speech-mode class for CSS
+        if (speechEnabled) {
+          btn.classList.add('speech-mode');
+        } else {
+          btn.classList.remove('speech-mode');
+        }
+      }
       if (iconPath) iconPath.setAttribute('d', 'M6 19h4V5H6v14zm8-14v14h4V5h-4z');
 
       if (speechEnabled) {
         // Speech mode: read news and navigate after speech ends
+        // Hide progress bar in speech mode via CSS class
         updateProgress(0);
         speakNews(currentIdx);
       } else {
-        // Timer mode: use countdown
+        // Timer mode: use countdown with progress bar
         progressStart = Date.now();
         updateProgress();
         // Update progress every 100ms
@@ -583,6 +598,7 @@
       const iconPath = el('iconPath');
       if (btn) {
         btn.classList.remove('playing');
+        btn.classList.remove('speech-mode');
       }
       if (iconPath) iconPath.setAttribute('d', 'M8 5v14l11-7z');
       updateProgress(0);
@@ -637,7 +653,7 @@
           stopSpeaking();
           speakNews(idx);
         } else {
-          // Timer mode: reset countdown
+          // Timer mode: reset countdown with progress bar
           progressStart = Date.now();
           updateProgress();
           if (autoPlayTimer) clearTimeout(autoPlayTimer);
@@ -734,6 +750,76 @@
       window.electronAPI.setContentFontSize(contentFontSize);
     }
 
+    function speakNews(idx) {
+      if (!speechEnabled || !speechSynth) return;
+      const news = newsItems[idx];
+      if (!news) return;
+
+      // Cancel any ongoing speech
+      speechSynth.cancel();
+
+      // First speak: "News number X" with 1 second delay after
+      const numberText = 'Haber numarası ' + (idx + 1) + '.';
+      const numberUtterance = new SpeechSynthesisUtterance(numberText);
+      numberUtterance.lang = 'tr-TR';
+      numberUtterance.rate = 1.0;
+      numberUtterance.pitch = 1.0;
+
+      numberUtterance.onend = () => {
+        // Wait 1 second after "news number", then speak content
+        setTimeout(() => {
+          const contentText = (news.title || '') + '. ' + (news.fullContent || news.content || news.summary || '');
+          const contentUtterance = new SpeechSynthesisUtterance(contentText);
+          contentUtterance.lang = 'tr-TR';
+          contentUtterance.rate = 1.0;
+          contentUtterance.pitch = 1.0;
+          currentUtterance = contentUtterance;
+
+          contentUtterance.onend = () => {
+            currentUtterance = null;
+            // Navigate to next news after speech ends
+            if (isPlaying) {
+              navigate(1);
+              if (isPlaying) {
+                setTimeout(() => startAutoPlay(), 1000); // Wait 1 second between news
+              }
+            }
+          };
+
+          contentUtterance.onerror = () => {
+            currentUtterance = null;
+            if (isPlaying) {
+              navigate(1);
+              if (isPlaying) {
+                setTimeout(() => startAutoPlay(), 1000);
+              }
+            }
+          };
+
+          speechSynth.speak(contentUtterance);
+        }, 1000); // Wait 1 second after news number
+      };
+
+      numberUtterance.onerror = () => {
+        // If error on number, try content directly
+        if (isPlaying) {
+          navigate(1);
+          if (isPlaying) {
+            setTimeout(() => startAutoPlay(), 1000);
+          }
+        }
+      };
+
+      speechSynth.speak(numberUtterance);
+    }
+
+    function stopSpeaking() {
+      if (speechSynth) {
+        speechSynth.cancel();
+        currentUtterance = null;
+      }
+    }
+
     // Keyboard
     document.addEventListener('keydown', (e) => {
       const scroll = el('articleScroll');
@@ -828,49 +914,6 @@
       window.electronAPI.onThemeChanged((theme) => {
         applyTheme(theme);
       });
-    }
-
-    let speechEnabled = false;
-    let speechSynth = window.speechSynthesis;
-    let currentUtterance = null;
-
-    function speakNews(idx) {
-      if (!speechEnabled || !speechSynth) return;
-      const news = newsItems[idx];
-      if (!news) return;
-
-      // Cancel any ongoing speech
-      speechSynth.cancel();
-
-      const text = 'Haber numarası ' + (idx + 1) + '. ' + (news.title || '') + '. ' + (news.fullContent || news.content || news.summary || '');
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'tr-TR';
-      utterance.rate = 1.0;
-      utterance.pitch = 1.0;
-      currentUtterance = utterance;
-
-      utterance.onend = () => {
-        currentUtterance = null;
-        // Navigate to next news after speech ends
-        if (isPlaying) {
-          navigate(1);
-          if (isPlaying) {
-            setTimeout(() => startAutoPlay(), 1000); // Wait 1 second between news
-          }
-        }
-      };
-
-      utterance.onerror = () => {
-        currentUtterance = null;
-        if (isPlaying) {
-          navigate(1);
-          if (isPlaying) {
-            setTimeout(() => startAutoPlay(), 1000);
-          }
-        }
-      };
-
-      speechSynth.speak(utterance);
     }
 
     function stopSpeaking() {

@@ -44,7 +44,7 @@ const defaultState = {
   contentFontSize: 14,
   theme: 'dark',
   autoPlayDelay: 5000,
-  speechEnabled: false
+  speechEnabled: true
 }
 
 function ensureDataDir() {

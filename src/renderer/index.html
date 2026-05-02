@@ -684,8 +684,8 @@
           <div class="option-item">
             <span class="option-label">Sesli Okuma</span>
             <select class="option-select" id="speechEnabled" onchange="changeSpeechEnabled(this.value)">
-              <option value="false" selected>Kapalı</option>
-              <option value="true">Açık</option>
+              <option value="false">Kapalı</option>
+              <option value="true" selected>Açık</option>
             </select>
           </div>
         </div>
@@ -737,7 +737,8 @@
       itemsPerPage: 10,
       currentPage: 1,
       fontSize: 16,
-      theme: 'dark'
+      theme: 'dark',
+      speechEnabled: true
     };
     let allNews = [];
     let isLoading = false;
@@ -757,6 +758,11 @@
         renderSources();
         setupEventListeners();
         applyState();
+        // Sync speech dropdown with actual state
+        const speechSelect = document.getElementById('speechEnabled');
+        if (speechSelect) {
+          speechSelect.value = currentState.speechEnabled ? 'true' : 'false';
+        }
 
         if (currentState.enabledSources.length > 0) {
           await fetchNews();
