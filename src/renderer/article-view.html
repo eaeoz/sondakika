@@ -364,7 +364,7 @@
       right: 24px;
       width: 56px;
       height: 56px;
-      border-radius: 50%;
+      border-radius: 8px;
       background: linear-gradient(135deg, var(--accent), var(--accent-sec));
       border: none;
       color: white;
@@ -386,19 +386,19 @@
       transform: scale(0.95);
     }
     .autoplay-btn.playing {
-      animation: float 3s ease-in-out infinite, pulse-ring 2s ease-out infinite;
+      animation: float 3s ease-in-out infinite;
     }
     .autoplay-btn .btn-icon {
       transition: transform 0.3s ease;
     }
     .autoplay-btn.playing .btn-icon {
-      animation: rotate-icon 2s linear infinite;
+      animation: none;
     }
 
     @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
-    }
+       0%, 100% { transform: translateY(0px); }
+       50% { transform: translateY(-5px); }
+     }
     @keyframes pulse-ring {
       0% { box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4), 0 0 0 0 rgba(99, 102, 241, 0.4); }
       70% { box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4), 0 0 0 15px rgba(99, 102, 241, 0); }
@@ -416,18 +416,17 @@
       left: -6px;
       width: 68px;
       height: 68px;
-      transform: rotate(-90deg);
     }
-    .autoplay-btn .progress-ring circle {
+    .autoplay-btn .progress-ring rect {
       fill: none;
       stroke: var(--ring-bg);
       stroke-width: 3;
-      stroke-dasharray: 213.63;
-      stroke-dashoffset: 213.63;
+      stroke-dasharray: 248;
+      stroke-dashoffset: 248;
       transition: stroke-dashoffset 0.1s linear;
       filter: drop-shadow(0 0 3px var(--ring-fg));
     }
-    .autoplay-btn.playing .progress-ring circle {
+    .autoplay-btn.playing .progress-ring rect {
       stroke: var(--ring-fg);
       filter: drop-shadow(0 0 6px var(--ring-fg));
     }
@@ -511,12 +510,12 @@
   </div>
 
   <!-- Floating Auto-Play Button -->
-  <button class="autoplay-btn" id="autoplayBtn" title="Otomatik Geçiş (Space)">
-    <svg class="progress-ring" viewBox="0 0 68 68">
-      <circle cx="34" cy="34" r="34" id="progressCircle"/>
-    </svg>
-    <span class="btn-icon" id="btnIcon">▶</span>
-  </button>
+    <button class="autoplay-btn" id="autoplayBtn" title="Otomatik Geçiş (Space)">
+      <svg class="progress-ring" viewBox="0 0 68 68">
+        <rect x="3" y="3" width="62" height="62" rx="8" ry="8" id="progressRect"/>
+      </svg>
+      <span class="btn-icon" id="btnIcon">▶</span>
+    </button>
 
   <script>
     let newsItems   = [];
@@ -591,9 +590,9 @@
     }
 
     function updateProgress(forcePercent) {
-      const circle = el('progressCircle');
-      if (!circle) return;
-      const circumference = 2 * Math.PI * 34;
+      const rect = el('progressRect');
+      if (!rect) return;
+      const totalLength = 248;
       let percent;
       if (forcePercent !== undefined) {
         percent = forcePercent;
@@ -603,8 +602,8 @@
       } else {
         percent = 0;
       }
-      const offset = circumference - (percent * circumference);
-      circle.style.strokeDashoffset = offset;
+      const offset = totalLength - (percent * totalLength);
+      rect.style.strokeDashoffset = offset;
     }
 
     function renderArticle(idx, slideDir) {
