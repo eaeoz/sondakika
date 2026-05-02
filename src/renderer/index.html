@@ -668,6 +668,13 @@
             </select>
           </div>
           <div class="option-item">
+            <span class="option-label">Sesli Okuma</span>
+            <select class="option-select" id="speechEnabled" onchange="changeSpeechEnabled(this.value)">
+              <option value="false">Kapalı</option>
+              <option value="true" selected>Açık</option>
+            </select>
+          </div>
+          <div class="option-item">
             <span class="option-label">Scroll Delay</span>
             <select class="option-select" id="autoPlayDelay" onchange="changeAutoPlayDelay(this.value)">
               <option value="3000">3 Saniye</option>
@@ -679,13 +686,6 @@
               <option value="30000">30 Saniye</option>
               <option value="45000">45 Saniye</option>
               <option value="60000">60 Saniye</option>
-            </select>
-          </div>
-          <div class="option-item">
-            <span class="option-label">Sesli Okuma</span>
-            <select class="option-select" id="speechEnabled" onchange="changeSpeechEnabled(this.value)">
-              <option value="false">Kapalı</option>
-              <option value="true" selected>Açık</option>
             </select>
           </div>
         </div>
@@ -963,6 +963,11 @@
       applyTitleFontSize(currentState.titleFontSize || 17);
       applyContentFontSize(currentState.contentFontSize || 14);
       applyTheme(currentState.theme || 'dark');
+      // Show/hide scroll delay based on speech setting
+      const autoPlayDelayItem = document.querySelector('#autoPlayDelay').closest('.option-item');
+      if (autoPlayDelayItem) {
+        autoPlayDelayItem.style.display = currentState.speechEnabled ? 'none' : 'flex';
+      }
     }
 
     async function saveState() {
@@ -1305,6 +1310,11 @@
       currentState.speechEnabled = value === 'true';
       await saveState();
       await window.electronAPI.setSpeechEnabled(currentState.speechEnabled);
+      // Show/hide scroll delay based on speech setting
+      const autoPlayDelayItem = document.querySelector('#autoPlayDelay').closest('.option-item');
+      if (autoPlayDelayItem) {
+        autoPlayDelayItem.style.display = currentState.speechEnabled ? 'none' : 'flex';
+      }
     }
 
     // Don't call showLoading() here - it will be called by setLoading(true) when fetchNews runs

@@ -290,6 +290,7 @@
     .nav-btn:disabled {
       opacity: 0.35;
       cursor: not-allowed;
+      filter: blur(1px);
     }
 
     .return-btn {
@@ -568,6 +569,11 @@
         // Hide progress bar in speech mode via CSS class
         updateProgress(0);
         speakNews(currentIdx);
+        // Disable and blur previous button during speech
+        const prevBtn = el('prevBtn');
+        if (prevBtn) {
+          prevBtn.disabled = true;
+        }
       } else {
         // Timer mode: use countdown with progress bar
         progressStart = Date.now();
@@ -602,6 +608,11 @@
       }
       if (iconPath) iconPath.setAttribute('d', 'M8 5v14l11-7z');
       updateProgress(0);
+      // Re-enable previous button when speech stops
+      const prevBtn = el('prevBtn');
+      if (prevBtn) {
+        prevBtn.disabled = currentIdx === 0;
+      }
     }
 
     function toggleAutoPlay() {
@@ -715,7 +726,10 @@
       }
 
       const prevBtn = el('prevBtn');
-      if (prevBtn) prevBtn.disabled = idx === 0;
+      if (prevBtn) {
+        // Disable and blur during speech, otherwise only at first article
+        prevBtn.disabled = isPlaying && speechEnabled ? true : idx === 0;
+      }
       const nextBtn = el('nextBtn');
       if (nextBtn) nextBtn.disabled = idx === newsItems.length - 1;
     }
