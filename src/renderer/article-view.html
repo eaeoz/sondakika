@@ -531,6 +531,7 @@
     let speechEnabled = false;
     let speechSynth = window.speechSynthesis;
     let currentUtterance = null;
+    let speechSessionId = 0;
     function el(id) {
       return document.getElementById(id);
     }
@@ -569,11 +570,11 @@
         // Hide progress bar in speech mode via CSS class
         updateProgress(0);
         speakNews(currentIdx);
-        // Disable and blur previous button during speech
+        // Disable and blur both navigation buttons during speech
         const prevBtn = el('prevBtn');
-        if (prevBtn) {
-          prevBtn.disabled = true;
-        }
+        const nextBtn = el('nextBtn');
+        if (prevBtn) prevBtn.disabled = true;
+        if (nextBtn) nextBtn.disabled = true;
       } else {
         // Timer mode: use countdown with progress bar
         progressStart = Date.now();
@@ -583,14 +584,18 @@
           updateProgress();
         }, 100);
         autoPlayTimer = setTimeout(() => {
-          navigate(1);
-          if (isPlaying) startAutoPlay();
+          if (isPlaying) {
+            navigate(1);
+            if (isPlaying) startAutoPlay();
+          }
         }, autoPlayDelay);
       }
     }
 
     function stopAutoPlay() {
       isPlaying = false;
+      // Increment session ID to invalidate any pending speech handlers
+      speechSessionId++;
       if (autoPlayTimer) {
         clearTimeout(autoPlayTimer);
         autoPlayTimer = null;
@@ -608,10 +613,15 @@
       }
       if (iconPath) iconPath.setAttribute('d', 'M8 5v14l11-7z');
       updateProgress(0);
-      // Re-enable previous button when speech stops
+      // Re-enable navigation buttons when speech stops
       const prevBtn = el('prevBtn');
-      if (prevBtn) {
-        prevBtn.disabled = currentIdx === 0;
+      const nextBtn = el('nextBtn');
+      if (prevBtn) prevBtn.disabled = currentIdx === 0;
+      if (nextBtn) nextBtn.disabled = currentIdx === newsItems.length - 1;
+      // Clear any pending timeouts in speakNews
+      if (window.speechTimeout) {
+        clearTimeout(window.speechTimeout);
+        window.speechTimeout = null;
       }
     }
 
@@ -731,7 +741,10 @@
         prevBtn.disabled = isPlaying && speechEnabled ? true : idx === 0;
       }
       const nextBtn = el('nextBtn');
-      if (nextBtn) nextBtn.disabled = idx === newsItems.length - 1;
+      if (nextBtn) {
+        // Disable and blur during speech, otherwise only at last article
+        nextBtn.disabled = isPlaying && speechEnabled ? true : idx === newsItems.length - 1;
+      }
     }
 
     function navigate(direction) {
@@ -765,12 +778,21 @@
     }
 
     function speakNews(idx) {
-      if (!speechEnabled || !speechSynth) return;
+      if (!speechEnabled || !speechSynth || !isPlaying) return;
       const news = newsItems[idx];
       if (!news) return;
 
+      // Increment session ID to invalidate any stale handlers
+      speechSessionId++;
+      const currentSession = speechSessionId;
+
       // Cancel any ongoing speech
       speechSynth.cancel();
+      // Clear any pending speech timeouts
+      if (window.speechTimeout) {
+        clearTimeout(window.speechTimeout);
+        window.speechTimeout = null;
+      }
 
       // First speak: "News number X" with 1 second delay after
       const numberText = 'Haber numarası ' + (idx + 1) + '.';
@@ -780,8 +802,15 @@
       numberUtterance.pitch = 1.0;
 
       numberUtterance.onend = () => {
+        // Check if this handler is still valid
+        if (speechSessionId !== currentSession) return;
         // Wait 1 second after "news number", then speak content
-        setTimeout(() => {
+        window.speechTimeout = setTimeout(() => {
+          window.speechTimeout = null;
+          // Check if this timeout is still valid
+          if (speechSessionId !== currentSession) return;
+          // Check if still playing before continuing
+          if (!isPlaying) return;
           const contentText = (news.title || '') + '. ' + (news.fullContent || news.content || news.summary || '');
           const contentUtterance = new SpeechSynthesisUtterance(contentText);
           contentUtterance.lang = 'tr-TR';
@@ -791,35 +820,53 @@
 
           contentUtterance.onend = () => {
             currentUtterance = null;
+            // Check if this handler is still valid
+            if (speechSessionId !== currentSession) return;
             // Navigate to next news after speech ends
             if (isPlaying) {
               navigate(1);
               if (isPlaying) {
-                setTimeout(() => startAutoPlay(), 1000); // Wait 1 second between news
+                window.speechTimeout = setTimeout(() => {
+                  window.speechTimeout = null;
+                  if (speechSessionId !== currentSession) return;
+                  if (isPlaying) startAutoPlay();
+                }, 1000); // Wait 1 second between news
               }
             }
           };
 
           contentUtterance.onerror = () => {
             currentUtterance = null;
+            // Check if this handler is still valid
+            if (speechSessionId !== currentSession) return;
             if (isPlaying) {
               navigate(1);
               if (isPlaying) {
-                setTimeout(() => startAutoPlay(), 1000);
+                window.speechTimeout = setTimeout(() => {
+                  window.speechTimeout = null;
+                  if (speechSessionId !== currentSession) return;
+                  if (isPlaying) startAutoPlay();
+                }, 1000);
               }
             }
           };
 
-          speechSynth.speak(contentUtterance);
+          if (isPlaying && speechSessionId === currentSession) speechSynth.speak(contentUtterance);
         }, 1000); // Wait 1 second after news number
       };
 
       numberUtterance.onerror = () => {
+        // Check if this handler is still valid
+        if (speechSessionId !== currentSession) return;
         // If error on number, try content directly
         if (isPlaying) {
           navigate(1);
           if (isPlaying) {
-            setTimeout(() => startAutoPlay(), 1000);
+            window.speechTimeout = setTimeout(() => {
+              window.speechTimeout = null;
+              if (speechSessionId !== currentSession) return;
+              if (isPlaying) startAutoPlay();
+            }, 1000);
           }
         }
       };
