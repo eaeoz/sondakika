@@ -12,5 +12,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
   setTheme: (theme) => ipcRenderer.invoke('set-theme', theme),
   onThemeChanged: (callback) => {
     ipcRenderer.on('theme-changed', (event, theme) => callback(theme))
-  }
+  },
+  setSpeechEnabled: (enabled) => ipcRenderer.invoke('set-speech-enabled', enabled)
 })

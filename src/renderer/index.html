@@ -681,6 +681,13 @@
               <option value="60000">60 Saniye</option>
             </select>
           </div>
+          <div class="option-item">
+            <span class="option-label">Sesli Okuma</span>
+            <select class="option-select" id="speechEnabled" onchange="changeSpeechEnabled(this.value)">
+              <option value="false" selected>Kapalı</option>
+              <option value="true">Açık</option>
+            </select>
+          </div>
         </div>
       </div>
     </aside>
@@ -1286,6 +1293,12 @@
       currentState.autoPlayDelay = parseInt(delay);
       await saveState();
       await window.electronAPI.setAutoPlayDelay(currentState.autoPlayDelay);
+    }
+
+    async function changeSpeechEnabled(value) {
+      currentState.speechEnabled = value === 'true';
+      await saveState();
+      await window.electronAPI.setSpeechEnabled(currentState.speechEnabled);
     }
 
     // Don't call showLoading() here - it will be called by setLoading(true) when fetchNews runs

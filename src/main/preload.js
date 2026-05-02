@@ -9,6 +9,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   setContentFontSize: (size) => ipcRenderer.invoke('set-content-font-size', size),
   setTheme: (theme) => ipcRenderer.invoke('set-theme', theme),
   setAutoPlayDelay: (delay) => ipcRenderer.invoke('set-auto-play-delay', delay),
+  setSpeechEnabled: (enabled) => ipcRenderer.invoke('set-speech-enabled', enabled),
   fetchNews: (sources, order) => ipcRenderer.invoke('fetch-news', sources, order),
   openExternal: (url) => ipcRenderer.invoke('open-external', url),
   openArticleView: (items, index) => ipcRenderer.invoke('open-article-view', items, index),

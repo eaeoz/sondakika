@@ -544,20 +544,28 @@
     function startAutoPlay() {
       if (isPlaying || newsItems.length <= 1) return;
       isPlaying = true;
-      progressStart = Date.now();
       const btn = el('autoplayBtn');
       const iconPath = el('iconPath');
       if (btn) btn.classList.add('playing');
       if (iconPath) iconPath.setAttribute('d', 'M6 19h4V5H6v14zm8-14v14h4V5h-4z');
-      updateProgress();
-      // Update progress every 100ms
-      progressInterval = setInterval(() => {
+
+      if (speechEnabled) {
+        // Speech mode: read news and navigate after speech ends
+        updateProgress(0);
+        speakNews(currentIdx);
+      } else {
+        // Timer mode: use countdown
+        progressStart = Date.now();
         updateProgress();
-      }, 100);
-      autoPlayTimer = setTimeout(() => {
-        navigate(1);
-        if (isPlaying) startAutoPlay();
-      }, autoPlayDelay);
+        // Update progress every 100ms
+        progressInterval = setInterval(() => {
+          updateProgress();
+        }, 100);
+        autoPlayTimer = setTimeout(() => {
+          navigate(1);
+          if (isPlaying) startAutoPlay();
+        }, autoPlayDelay);
+      }
     }
 
     function stopAutoPlay() {
@@ -570,6 +578,7 @@
         clearInterval(progressInterval);
         progressInterval = null;
       }
+      stopSpeaking();
       const btn = el('autoplayBtn');
       const iconPath = el('iconPath');
       if (btn) {
@@ -623,13 +632,20 @@
 
       // Reset timer on navigation
       if (isPlaying) {
-        progressStart = Date.now();
-        updateProgress();
-        if (autoPlayTimer) clearTimeout(autoPlayTimer);
-        autoPlayTimer = setTimeout(() => {
-          navigate(1);
-          if (isPlaying) startAutoPlay();
-        }, autoPlayDelay);
+        if (speechEnabled) {
+          // Speech mode: stop current speech and speak new article
+          stopSpeaking();
+          speakNews(idx);
+        } else {
+          // Timer mode: reset countdown
+          progressStart = Date.now();
+          updateProgress();
+          if (autoPlayTimer) clearTimeout(autoPlayTimer);
+          autoPlayTimer = setTimeout(() => {
+            navigate(1);
+            if (isPlaying) startAutoPlay();
+          }, autoPlayDelay);
+        }
       }
 
       const tbSource = el('tbSource');
@@ -814,12 +830,63 @@
       });
     }
 
+    let speechEnabled = false;
+    let speechSynth = window.speechSynthesis;
+    let currentUtterance = null;
+
+    function speakNews(idx) {
+      if (!speechEnabled || !speechSynth) return;
+      const news = newsItems[idx];
+      if (!news) return;
+
+      // Cancel any ongoing speech
+      speechSynth.cancel();
+
+      const text = 'Haber numarası ' + (idx + 1) + '. ' + (news.title || '') + '. ' + (news.fullContent || news.content || news.summary || '');
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'tr-TR';
+      utterance.rate = 1.0;
+      utterance.pitch = 1.0;
+      currentUtterance = utterance;
+
+      utterance.onend = () => {
+        currentUtterance = null;
+        // Navigate to next news after speech ends
+        if (isPlaying) {
+          navigate(1);
+          if (isPlaying) {
+            setTimeout(() => startAutoPlay(), 1000); // Wait 1 second between news
+          }
+        }
+      };
+
+      utterance.onerror = () => {
+        currentUtterance = null;
+        if (isPlaying) {
+          navigate(1);
+          if (isPlaying) {
+            setTimeout(() => startAutoPlay(), 1000);
+          }
+        }
+      };
+
+      speechSynth.speak(utterance);
+    }
+
+    function stopSpeaking() {
+      if (speechSynth) {
+        speechSynth.cancel();
+        currentUtterance = null;
+      }
+    }
+
     // Bootstrap
     async function init() {
       const data = await window.electronAPI.getData();
       newsItems  = data.newsItems || [];
       const startIdx = data.currentIndex || 0;
       autoPlayDelay = data.autoPlayDelay || 5000;
+      speechEnabled = data.speechEnabled || false;
       if (data.fontSize) {
         document.body.style.fontSize = data.fontSize + 'px';
       }
