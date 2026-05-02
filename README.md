@@ -248,7 +248,7 @@ cd sondakika
 # Bağımlılıkları yükleyin (hem GUI hem de eski CLI bağımlılıklarını içerir)
 npm install
 
-# v2.0.2 Electron GUI'sini çalıştır (varsayılan)
+# v2.0.3 Electron GUI'sini çalıştır (varsayılan)
 npm start
 
 # Windows yükleyicisini ve portable sürümü derle (NSIS + Portable, x64)
