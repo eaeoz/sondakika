@@ -130,7 +130,7 @@ Veya tüm sürümler için (v1.x CLI-only sürümleri dahil) [GitHub Releases sa
 ---
 
 ## ⌨️ Eski CLI Kullanımı (v1.x)
-*Not: v2.0.2 kod tabanı Electron GUI'sine odaklanmıştır. Aşağıdaki CLI işlevselliği v1.x sürümlerinden korunmuştur. Tam CLI aracını kullanmak için [v1.x sürümlerine](https://github.com/eaeoz/sondakika/releases) bakın veya `npm install -g sondakika@1.x` ile eski sürümü yükleyin.*
+*Not: v2.0.2 kod tabanı Electron GUI'sine odaklanmıştır. Aşağıdaki CLI işlevselliği v1.x sürümlerinden korunmuştur. Tam CLI aracını kullanmak için [v1.x sürümlerine](https://github.com/eaeoz/sondakika/releases) bakın veya `npm install -g sondakika` ile eski sürümü yükleyin.*
 
 ### CLI Özellikleri
 - 📰 Birden fazla Türk haber kaynağından haber getir
@@ -141,12 +141,12 @@ Veya tüm sürümler için (v1.x CLI-only sürümleri dahil) [GitHub Releases sa
 ### CLI Kurulumu
 #### npx kullanarak (kurulum gerektirmez, sadece v1.x)
 ```bash
-npx sondakika@1.x trt
+npx sondakika trt
 ```
 
 #### Global kurulum (v1.x)
 ```bash
-npm install -g sondakika@1.x
+npm install -g sondakika
 ```
 
 ### CLI Kullanım Örnekleri
