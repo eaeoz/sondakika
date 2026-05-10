@@ -264,7 +264,7 @@ function createFullScreenView(screen) {
     left: 0,
     width: '100%',
     height: 1,
-    content: '{center}{cyan-fg}◄{/cyan-fg} Önceki  {cyan-fg}►{/cyan-fg} Sonraki  {cyan-fg}Enter{/cyan-fg} Dön  {cyan-fg}O{/cyan-fg} Aç{/center}',
+    content: '{center}{cyan-fg}◄{/cyan-fg} Önceki  {cyan-fg}►{/cyan-fg} Sonraki  Don/Ac (Enter){/center}',
     tags: true,
     style: {
       fg: 'black',
