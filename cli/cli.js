@@ -5,6 +5,7 @@ const RssParser = require('rss-parser');
 const fs = require('fs');
 const path = require('path');
 const os = require('os');
+const { exec } = require('child_process');
 
 const packagePath = path.join(__dirname, 'package.json');
 const { version } = JSON.parse(fs.readFileSync(packagePath, 'utf8'));
@@ -226,7 +227,7 @@ function createFullScreenView(screen) {
     top: 0,
     left: 0,
     width: '100%',
-    height: '100%',
+    height: '100%-2',
     tags: true,
     border: {
       type: 'line'
@@ -242,13 +243,28 @@ function createFullScreenView(screen) {
     scrolloffset: 1
   });
 
+  const linkBar = blessed.box({
+    parent: screen,
+    bottom: 1,
+    left: 1,
+    width: '100%-2',
+    height: 1,
+    tags: true,
+    hidden: true,
+    content: '',
+    style: {
+      fg: 'cyan',
+      bg: 'black'
+    }
+  });
+
   const closeHint = blessed.box({
-    parent: overlay,
+    parent: screen,
     bottom: 0,
     left: 0,
     width: '100%',
     height: 1,
-    content: '{center}Enter ile listeye dön{/center}',
+    content: '{center}{cyan-fg}◄{/cyan-fg} Önceki  {cyan-fg}►{/cyan-fg} Sonraki  {cyan-fg}Enter{/cyan-fg} Dön  {cyan-fg}O{/cyan-fg} Aç{/center}',
     tags: true,
     style: {
       fg: 'black',
@@ -256,7 +272,7 @@ function createFullScreenView(screen) {
     }
   });
 
-  return { overlay, closeHint };
+  return { overlay, linkBar, closeHint };
 }
 
 function updateListDisplay(list, items, page, totalPages) {
@@ -279,7 +295,7 @@ function updateListDisplay(list, items, page, totalPages) {
   list.scrollTo(0);
 }
 
-function showFullScreen(overlay, item) {
+function showFullScreen(overlay, linkBar, item) {
   const title = item.title || 'Başlık yok';
   const dateStr = formatDate(item.pubDate || item.isodate);
   const summary = item.summary || item.contentSnippet || item.content || 'İçerik yok';
@@ -294,18 +310,22 @@ function showFullScreen(overlay, item) {
     content += `{gray-fg}📅 ${dateStr}{/gray-fg}\n\n`;
   }
 
-  content += summaryLines.join('\n') + '\n\n';
-
-  if (link) {
-    content += `{cyan-fg}🔗 ${link}{/cyan-fg}`;
-  }
+  content += summaryLines.join('\n');
 
   overlay.setContent(content);
   overlay.show();
+
+  if (link) {
+    linkBar.setContent(`{cyan-fg}🔗 ${link}{/cyan-fg}`);
+  } else {
+    linkBar.setContent('');
+  }
+  linkBar.show();
 }
 
-function hideFullScreen(overlay) {
+function hideFullScreen(overlay, linkBar) {
   overlay.hide();
+  linkBar.hide();
 }
 
 async function main() {
@@ -371,12 +391,13 @@ ${generalSrc}
 
   const screen = createScreen();
   const { list, header, footer } = createMainList(screen, [], sourceName);
-  const { overlay, closeHint } = createFullScreenView(screen);
+  const { overlay, linkBar, closeHint } = createFullScreenView(screen);
 
   let items = [];
   let currentPage = 0;
   let totalPages = 0;
   let inFullScreen = false;
+  let currentItemIndex = 0;
 
   const loadNews = async () => {
     header.setContent(`{bold}📰 ${sourceName}{/bold} - Yükleniyor...`);
@@ -419,18 +440,50 @@ ${generalSrc}
 
   const openFullScreen = () => {
     const start = currentPage * ITEMS_PER_PAGE;
-    const itemIndex = start + list.selected;
-    if (itemIndex < items.length) {
-      showFullScreen(overlay, items[itemIndex]);
+    currentItemIndex = start + list.selected;
+    if (currentItemIndex < items.length) {
+      showFullScreen(overlay, linkBar, items[currentItemIndex]);
       inFullScreen = true;
       screen.render();
     }
   };
 
   const closeFullScreen = () => {
-    hideFullScreen(overlay);
+    hideFullScreen(overlay, linkBar);
     inFullScreen = false;
     screen.render();
+  };
+
+  const goToPrevItem = () => {
+    if (inFullScreen && currentItemIndex > 0) {
+      currentItemIndex--;
+      showFullScreen(overlay, linkBar, items[currentItemIndex]);
+      const newPage = Math.floor(currentItemIndex / ITEMS_PER_PAGE);
+      const newSelected = currentItemIndex % ITEMS_PER_PAGE;
+      if (newPage !== currentPage) {
+        currentPage = newPage;
+        updateListDisplay(list, items, currentPage, totalPages);
+        updateFooter();
+      }
+      list.select(newSelected);
+      screen.render();
+    }
+  };
+
+  const goToNextItem = () => {
+    if (inFullScreen && currentItemIndex < items.length - 1) {
+      currentItemIndex++;
+      showFullScreen(overlay, linkBar, items[currentItemIndex]);
+      const newPage = Math.floor(currentItemIndex / ITEMS_PER_PAGE);
+      const newSelected = currentItemIndex % ITEMS_PER_PAGE;
+      if (newPage !== currentPage) {
+        currentPage = newPage;
+        updateListDisplay(list, items, currentPage, totalPages);
+        updateFooter();
+      }
+      list.select(newSelected);
+      screen.render();
+    }
   };
 
   screen.key(['up'], () => {
@@ -448,14 +501,28 @@ ${generalSrc}
   });
 
   screen.key(['left'], () => {
-    if (!inFullScreen) {
+    if (inFullScreen) {
+      goToPrevItem();
+    } else {
       goToPrevPage();
     }
   });
 
   screen.key(['right'], () => {
-    if (!inFullScreen) {
+    if (inFullScreen) {
+      goToNextItem();
+    } else {
       goToNextPage();
+    }
+  });
+
+  screen.key(['o', 'O'], () => {
+    if (inFullScreen && currentItemIndex < items.length) {
+      const link = items[currentItemIndex].link;
+      if (link) {
+        const cmd = process.platform === 'win32' ? 'start' : process.platform === 'darwin' ? 'open' : 'xdg-open';
+        exec(`${cmd} "${link}"`);
+      }
     }
   });
 
