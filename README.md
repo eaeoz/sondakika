@@ -3,17 +3,17 @@
 **Windows için Modern Electron Tabanlı RSS Haber Okuyucu + Eski CLI Aracı**  
 *Türkçe haberleri gerçek zamanlı toplayan yerel masaüstü uygulaması, artı orijinal terminal tabanlı CLI işlevselliği*
 
-[![Sürüm](https://img.shields.io/badge/sürüm-2.0.3-blue)](https://github.com/eaeoz/sondakika/releases)  
+[![Sürüm](https://img.shields.io/badge/sürüm-2.0.4-blue)](https://github.com/eaeoz/sondakika/releases)  
 
 [![Lisans](https://img.shields.io/badge/lisans-ISC-green)](LICENSE)  
 [![Windows Desteği](https://img.shields.io/badge/Windows-10+-lightgrey)](https://www.microsoft.com/windows)  
-[![İndir](https://img.shields.io/badge/İndir-Windows%20Yükleyici-blue?style=for-the-badge)](https://github.com/eaeoz/sondakika/releases/download/2.0.3/Sondakika.Setup.2.0.3.exe) [![İndir](https://img.shields.io/badge/İndir-Windows%20Portable-green?style=for-the-badge)](https://github.com/eaeoz/sondakika/releases/download/2.0.3/Sondakika_portable_2.0.3.exe)
+[![İndir](https://img.shields.io/badge/İndir-Windows%20Yükleyici-blue?style=for-the-badge)](https://github.com/eaeoz/sondakika/releases/download/2.0.4/Sondakika.Setup.2.0.4.exe) [![İndir](https://img.shields.io/badge/İndir-Windows%20Portable-green?style=for-the-badge)](https://github.com/eaeoz/sondakika/releases/download/2.0.4/Sondakika_portable_2.0.4.exe)
 
 ---
 
 ## 📋 İçindekiler
 1. [Genel Bakış](#-genel-bakış-1)
-2. [🪟 Windows Masaüstü Uygulaması (v2.0.3 GUI)](#-windows-masaüstü-uygulaması-v203-gui-1)
+2. [🪟 Windows Masaüstü Uygulaması (v2.0.4 GUI)](#-windows-masaüstü-uygulaması-v204-gui-1)
    - [Sondakika Nedir?](#sondakika-nedir)
    - [Nasıl Çalışır?](#nasıl-çalışır)
    - [Sistem Gereksinimleri](#sistem-gereksinimleri)
@@ -28,22 +28,24 @@
    - [CLI Kullanım Örnekleri](#cli-kullanım-örnekleri)
    - [Mevcut Kaynaklar](#mevcut-kaynaklar)
 5. [🛠️ Kaynaktan Derleme](#️-kaynaktan-derleme)
-6. [📦 v2.0.0'da Neler Yaptık?](#-v200da-neler-yaptık)
-7. [🤝 Katkıda Bulunma](#-katkıda-bulunma)
-8. [📄 Lisans](#-lisans-1)
+6. [📦 v2.0.4 Güncellemesi](#-v204-güncellemesi)
+7. [📦 v2.0.3 Güncellemesi](#-v203-güncellemesi)
+8. [📦 v2.0.0'da Neler Yaptık?](#-v200da-neler-yaptık)
+9. [🤝 Katkıda Bulunma](#-katkıda-bulunma)
+10. [📄 Lisans](#-lisans-1)
 
 ---
 
 ## 📖 Genel Bakış
 Sondakika iki modda mevcuttur:
-- **v2.0.3+**: Uygulama içi makale okuyucu, temalandırma ve klavye navigasyonu içeren tam özellikli yerel Windows Electron GUI
+- **v2.0.4+**: Uygulama içi makale okuyucu, temalandırma ve klavye navigasyonu içeren tam özellikli yerel Windows Electron GUI
 - **v1.x Eski**: Türk RSS beslemelerinden terminalinizde doğrudan haber getirmek ve görüntülemek için hafif terminal tabanlı CLI aracı
 
-Varsayılan `npm start` komutu v2.0.3 Electron GUI'sini çalıştırır. Eski CLI işlevselliği, terminal tabanlı iş akışlarını tercih eden kullanıcılar için korunmuştur (tam CLI kodu için v1.x sürümlerine bakın).
+Varsayılan `npm start` komutu v2.0.4 Electron GUI'sini çalıştırır. Eski CLI işlevselliği, terminal tabanlı iş akışlarını tercih eden kullanıcılar için korunmuştur (tam CLI kodu için v1.x sürümlerine bakın).
 
 ---
 
-## 🪟 Windows Masaüstü Uygulaması (v2.0.3 GUI)
+## 🪟 Windows Masaüstü Uygulaması (v2.0.4 GUI)
 
 ### Sondakika Nedir?
 9 büyük Türk haber kaynağından (Cumhuriyet, TRT Haber, Mynet, Sabah, Star, Gazete Vatan, Habertürk, CNN Türk, Yeni Şafak, Anadolu Ajansı) gerçek zamanlı haberleri modern ve kolay okunabilir bir arayüzde getiren yerel bir Windows uygulaması.
@@ -67,20 +69,20 @@ Varsayılan `npm start` komutu v2.0.3 Electron GUI'sini çalıştırır. Eski CL
 Windows yükleyicisini doğrudan indirin:
 
 **Doğrudan Link:**  
-`https://github.com/eaeoz/sondakika/releases/download/2.0.3/Sondakika.Setup.2.0.3.exe`
+`https://github.com/eaeoz/sondakika/releases/download/2.0.4/Sondakika.Setup.2.0.4.exe`
 
 **Portable Sürüm (Kurulumsuz):**
 Doğrudan indirip çalıştırabilirsiniz, kurulum gerektirmez:
 
 **Doğrudan Link:**  
-`https://github.com/eaeoz/sondakika/releases/download/2.0.3/Sondakika_portable_2.0.3.exe`
+`https://github.com/eaeoz/sondakika/releases/download/2.0.4/Sondakika_portable_2.0.4.exe`
 
 *Not: Portable sürüm kurulum yapmaz, Windows Smart App Control uyarısını engellemek için idealdir.*
 
 Veya tüm sürümler için (v1.x CLI-only sürümleri dahil) [GitHub Releases sayfasını](https://github.com/eaeoz/sondakika/releases) ziyaret edin.
 
 ### Kurulum
-1. Yukarıdaki bağlantıyı kullanarak `Sondakika.Setup.2.0.3.exe` dosyasını indirin
+1. Yukarıdaki bağlantıyı kullanarak `Sondakika.Setup.2.0.4.exe` dosyasını indirin
 2. Yükleyiciyi çalıştırın ve ekrandaki talimatları izleyin
 3. Uygulama kurulumdan sonra otomatik olarak başlayacaktır
 4. Başlat menüsüne ve Masaüstüne kısayollar eklenecektir
@@ -105,6 +107,7 @@ Veya tüm sürümler için (v1.x CLI-only sürümleri dahil) [GitHub Releases sa
 - ✅ **Sayfalama**: Sayfa başına kaç makale görüntüleneceğini kontrol edin (5, 10, 15, 20)
 - ✅ **Görsel Çıkarımı**: RSS beslemelerinden makale görsellerini otomatik olarak çıkarır ve görüntüler
 - ✅ **Durum Kalıcılığı**: Ayarlarınızı, pencere konumunuzu ve etkin kaynakları hatırlar
+- ✅ **Döngü Modu**: Makale okuyucuda sona gelince başa dön (Açık/Kapalı)
 - ✅ **Harici Bağlantı Desteği**: Makaleleri varsayılan tarayıcınızda açın
 - ✅ **Türkçe Dil Arayüzü**: Tamamen yerelleştirilmiş arayüz
 - ✅ **Özel Uygulama Simgesi**: Çok boyutlu simge ile profesyonel markalama
@@ -127,7 +130,8 @@ Veya tüm sürümler için (v1.x CLI-only sürümleri dahil) [GitHub Releases sa
 ### Makale Okuyucu
 | Kısayol | Eylem |
 |---------|-------|
-| `↑` `↓` `Space` | Makale içeriğini kaydır |
+| `↑` `↓` | Makale içeriğini kaydır |
+| `Space` | Otomatik geçişi başlat/durdur |
 | `PageUp` `PageDown` | Sayfa sayfa kaydır |
 | `Home` `End` | En üste/en alta kaydır |
 | `←` `→` | Önceki/Sonraki makale |
@@ -248,7 +252,7 @@ cd sondakika
 # Bağımlılıkları yükleyin (hem GUI hem de eski CLI bağımlılıklarını içerir)
 npm install
 
-# v2.0.3 Electron GUI'sini çalıştır (varsayılan)
+# v2.0.4 Electron GUI'sini çalıştır (varsayılan)
 npm start
 
 # Windows yükleyicisini ve portable sürümü derle (NSIS + Portable, x64)
@@ -256,10 +260,25 @@ npm run build
 ```
 
 Derlenen yükleyici ve portable sürüm `dist/` klasöründe bulunacaktır:
-- `Sondakika Setup 2.0.3.exe` (NSIS yükleyici)
-- `Sondakika_portable_2.0.3.exe` (Kurulumsuz portable)
+- `Sondakika Setup 2.0.4.exe` (NSIS yükleyici)
+- `Sondakika_portable_2.0.4.exe` (Kurulumsuz portable)
 
 Eski CLI işlevselliği üzerinde çalışmak için [eski sürümlerdeki](https://github.com/eaeoz/sondakika/releases) v1.x kaynak koduna bakın.
+
+---
+
+## 📦 v2.0.4 Güncellemesi
+
+### Yeni Özellikler
+- ✅ **Döngü Modu**: Makale okuyucuda son habere gelince başa dönme özelliği eklendi. Kenar çubuğundaki "Döngü" seçeneği ile açılıp kapatılabilir
+- ✅ **Döngü Kapalıyken**: Eski davranış korunur - ilk/son haberde gezinme butonları devre dışı kalır
+
+### Düzeltilen Sorunlar
+- ✅ Sesli okuma başlık metni "Haber numarası 1." yerine artık "1. haber" olarak okunur (TTS: "Birinci haber")
+- ✅ Sesli okuma sırasında gezinme butonları devre dışı kalır, durunca döngü ayarına göre doğru şekilde etkinleşir
+
+### İyileştirmeler
+- ✅ Makale okuyucuda sürekli okuma/izleme deneyimi için döngüsel gezinme
 
 ---
 
