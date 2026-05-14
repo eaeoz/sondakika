@@ -616,8 +616,8 @@
       // Re-enable navigation buttons when speech stops
       const prevBtn = el('prevBtn');
       const nextBtn = el('nextBtn');
-      if (prevBtn) prevBtn.disabled = currentIdx === 0;
-      if (nextBtn) nextBtn.disabled = currentIdx === newsItems.length - 1;
+      if (prevBtn) prevBtn.disabled = false;
+      if (nextBtn) nextBtn.disabled = false;
       // Clear any pending timeouts in speakNews
       if (window.speechTimeout) {
         clearTimeout(window.speechTimeout);
@@ -737,21 +737,20 @@
 
       const prevBtn = el('prevBtn');
       if (prevBtn) {
-        // Disable and blur during speech, otherwise only at first article
-        prevBtn.disabled = isPlaying && speechEnabled ? true : idx === 0;
+        // Only disable during speech playback
+        prevBtn.disabled = isPlaying && speechEnabled;
       }
       const nextBtn = el('nextBtn');
       if (nextBtn) {
-        // Disable and blur during speech, otherwise only at last article
-        nextBtn.disabled = isPlaying && speechEnabled ? true : idx === newsItems.length - 1;
+        // Only disable during speech playback
+        nextBtn.disabled = isPlaying && speechEnabled;
       }
     }
 
     function navigate(direction) {
-      const next = currentIdx + direction;
-      if (next >= 0 && next < newsItems.length) {
-        renderArticle(next, direction > 0 ? 'right' : 'left');
-      }
+      if (newsItems.length === 0) return;
+      const next = ((currentIdx + direction) % newsItems.length + newsItems.length) % newsItems.length;
+      renderArticle(next, direction > 0 ? 'right' : 'left');
     }
 
     function returnToMain() {
