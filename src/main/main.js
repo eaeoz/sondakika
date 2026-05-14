@@ -44,7 +44,8 @@ const defaultState = {
   contentFontSize: 14,
   theme: 'dark',
   autoPlayDelay: 5000,
-  speechEnabled: true
+  speechEnabled: true,
+  loopEnabled: true
 }
 
 function ensureDataDir() {
@@ -298,6 +299,13 @@ ipcMain.handle('set-speech-enabled', (event, enabled) => {
   return true
 })
 
+ipcMain.handle('set-loop-enabled', (event, enabled) => {
+  const state = loadState()
+  state.loopEnabled = enabled
+  saveState(state)
+  return true
+})
+
 ipcMain.handle('fetch-news', async (event, enabledSources, sortOrder) => {
   let items = await fetchAllNews(enabledSources)
   items = sortNews(items, sortOrder)
@@ -321,7 +329,8 @@ ipcMain.handle('open-article-view', async (event, newsItems, currentIndex) => {
       contentFontSize: state.contentFontSize || 14,
       theme: state.theme || 'dark',
       autoPlayDelay: state.autoPlayDelay || 5000,
-      speechEnabled: state.speechEnabled || false
+      speechEnabled: state.speechEnabled || false,
+      loopEnabled: state.loopEnabled !== false
     }
     articleWindow.focus()
     articleWindow.webContents.send('article-view-navigate', articleWindowData)
@@ -336,7 +345,8 @@ ipcMain.handle('open-article-view', async (event, newsItems, currentIndex) => {
     contentFontSize: state.contentFontSize || 14,
     theme: state.theme || 'dark',
     autoPlayDelay: state.autoPlayDelay || 5000,
-    speechEnabled: state.speechEnabled || false
+    speechEnabled: state.speechEnabled || false,
+    loopEnabled: state.loopEnabled !== false
   }
   const mainBounds = mainWindow ? mainWindow.getBounds() : { width: 1200, height: 800, x: 100, y: 50 }
   const theme = state.theme || 'dark'

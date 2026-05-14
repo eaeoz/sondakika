@@ -675,6 +675,13 @@
             </select>
           </div>
           <div class="option-item">
+            <span class="option-label">Döngü</span>
+            <select class="option-select" id="loopEnabled" onchange="changeLoopEnabled(this.value)">
+              <option value="true">Açık</option>
+              <option value="false">Kapalı</option>
+            </select>
+          </div>
+          <div class="option-item">
             <span class="option-label">Scroll Delay</span>
             <select class="option-select" id="autoPlayDelay" onchange="changeAutoPlayDelay(this.value)">
               <option value="3000">3 Saniye</option>
@@ -738,7 +745,8 @@
       currentPage: 1,
       fontSize: 16,
       theme: 'dark',
-      speechEnabled: true
+      speechEnabled: true,
+      loopEnabled: true
     };
     let allNews = [];
     let isLoading = false;
@@ -959,6 +967,7 @@
       el = document.getElementById('contentFontSizeValue'); if (el) el.textContent = (currentState.contentFontSize || 14) + 'px';
       el = document.getElementById('themeSelect'); if (el) el.value = currentState.theme || 'dark';
       el = document.getElementById('autoPlayDelay'); if (el) el.value = currentState.autoPlayDelay || 5000;
+      el = document.getElementById('loopEnabled'); if (el) el.value = currentState.loopEnabled !== false ? 'true' : 'false';
       applyFontSize(currentState.fontSize);
       applyTitleFontSize(currentState.titleFontSize || 17);
       applyContentFontSize(currentState.contentFontSize || 14);
@@ -1304,6 +1313,12 @@
       currentState.autoPlayDelay = parseInt(delay);
       await saveState();
       await window.electronAPI.setAutoPlayDelay(currentState.autoPlayDelay);
+    }
+
+    async function changeLoopEnabled(value) {
+      currentState.loopEnabled = value === 'true';
+      await saveState();
+      await window.electronAPI.setLoopEnabled(currentState.loopEnabled);
     }
 
     async function changeSpeechEnabled(value) {

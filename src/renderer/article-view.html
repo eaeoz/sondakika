@@ -529,6 +529,7 @@
     let autoPlayTimer = null;
     let isPlaying = false;
     let speechEnabled = false;
+    let loopEnabled = true;
     let speechSynth = window.speechSynthesis;
     let currentUtterance = null;
     let speechSessionId = 0;
@@ -616,8 +617,8 @@
       // Re-enable navigation buttons when speech stops
       const prevBtn = el('prevBtn');
       const nextBtn = el('nextBtn');
-      if (prevBtn) prevBtn.disabled = false;
-      if (nextBtn) nextBtn.disabled = false;
+      if (prevBtn) prevBtn.disabled = !loopEnabled && currentIdx === 0;
+      if (nextBtn) nextBtn.disabled = !loopEnabled && currentIdx === newsItems.length - 1;
       // Clear any pending timeouts in speakNews
       if (window.speechTimeout) {
         clearTimeout(window.speechTimeout);
@@ -737,19 +738,22 @@
 
       const prevBtn = el('prevBtn');
       if (prevBtn) {
-        // Only disable during speech playback
-        prevBtn.disabled = isPlaying && speechEnabled;
+        prevBtn.disabled = isPlaying && speechEnabled ? true : !loopEnabled && idx === 0;
       }
       const nextBtn = el('nextBtn');
       if (nextBtn) {
-        // Only disable during speech playback
-        nextBtn.disabled = isPlaying && speechEnabled;
+        nextBtn.disabled = isPlaying && speechEnabled ? true : !loopEnabled && idx === newsItems.length - 1;
       }
     }
 
     function navigate(direction) {
       if (newsItems.length === 0) return;
-      const next = ((currentIdx + direction) % newsItems.length + newsItems.length) % newsItems.length;
+      let next = currentIdx + direction;
+      if (loopEnabled) {
+        next = ((next % newsItems.length) + newsItems.length) % newsItems.length;
+      } else {
+        if (next < 0 || next >= newsItems.length) return;
+      }
       renderArticle(next, direction > 0 ? 'right' : 'left');
     }
 
@@ -990,6 +994,7 @@
       const startIdx = data.currentIndex || 0;
       autoPlayDelay = data.autoPlayDelay || 5000;
       speechEnabled = data.speechEnabled || false;
+      loopEnabled = data.loopEnabled !== false;
       if (data.fontSize) {
         document.body.style.fontSize = data.fontSize + 'px';
       }
