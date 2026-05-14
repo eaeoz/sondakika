@@ -797,8 +797,8 @@
         window.speechTimeout = null;
       }
 
-      // First speak: "News number X" with 1 second delay after
-      const numberText = 'Haber numarası ' + (idx + 1) + '.';
+      // First speak: "X. haber" (TTS reads as "Birinci haber", "İkinci haber", etc.)
+      const numberText = (idx + 1) + '. haber';
       const numberUtterance = new SpeechSynthesisUtterance(numberText);
       numberUtterance.lang = 'tr-TR';
       numberUtterance.rate = 1.0;
