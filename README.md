@@ -22,6 +22,14 @@ iex (iwr -useb https://tinyurl.com/sndkkps1)
 
 ---
 
+### Örnek Görüntü
+
+![Sondakika Haber Okuyucu](sample_preview/sondakika-haber-okuyucu.png)
+
+![Sondakika Uygulaması](sample_preview/sondakika-2.png)
+
+---
+
 [![Lisans](https://img.shields.io/badge/lisans-ISC-green)](LICENSE)  
 [![Windows Desteği](https://img.shields.io/badge/Windows-10+-lightgrey)](https://www.microsoft.com/windows)  
 [![İndir](https://img.shields.io/badge/İndir-Windows%20Yükleyici-blue?style=for-the-badge)](https://github.com/eaeoz/sondakika/releases/download/2.0.4/Sondakika.Setup.2.0.4.exe) [![İndir](https://img.shields.io/badge/İndir-Windows%20Portable-green?style=for-the-badge)](https://github.com/eaeoz/sondakika/releases/download/2.0.4/Sondakika_portable_2.0.4.exe)
